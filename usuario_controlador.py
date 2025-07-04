@@ -9,7 +9,7 @@ from modelo.usuario_modelo import (
 def login_usuario(nombre, clave):
     usuarios = obtener_usuarios()
     if nombre in usuarios and usuarios[nombre]["password"] == clave:
-        return True, usuarios[nombre]["rol"]
+        return True, usuarios[nombre]
     return False, None
 
 def registrar_nuevo_usuario(nombre, clave, rol):
