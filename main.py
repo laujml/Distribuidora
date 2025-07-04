@@ -13,7 +13,6 @@ def main():
     stack.addWidget(PantallaBienvenida(stack))     # I 0
     stack.addWidget(PantallaLogin(stack))          # I 1
     stack.addWidget(PantallaAdministrador(stack))  # I 2
-    stack.addWidget(PantallaDashboard())           # I 3
 
     stack.showMaximized()
     stack.setWindowTitle("Gestión de Pedidos")
