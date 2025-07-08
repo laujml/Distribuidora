@@ -1,23 +1,25 @@
-# main.py
 import sys
 from PyQt6.QtWidgets import QApplication, QStackedWidget
-from vista.pantalla_bienvenida import PantallaBienvenida
-from vista.pantalla_login import PantallaLogin
-from vista.pantalla_administrador import PantallaAdministrador
-from vista.pantalla_dashboard import PantallaDashboard
+from views.principal_view import VentanaPrincipalProveedor
+from views.proveedor_view import BaseProveedorVentana
 
-def main():
+if __name__ == '__main__':
     app = QApplication(sys.argv)
-    stack = QStackedWidget()
+    stacked_widget = QStackedWidget()
+    stacked_widget.setStyleSheet("background-color: #4d5a62;")
 
-    stack.addWidget(PantallaBienvenida(stack))     # I 0
-    stack.addWidget(PantallaLogin(stack))          # I 1
-    stack.addWidget(PantallaAdministrador(stack))  # I 2
+    ventana_inicio = VentanaPrincipalProveedor(stacked_widget)
+    ventana_agregar = BaseProveedorVentana(stacked_widget, "Agregar Proveedor", "guardar", "Guardar")
+    ventana_eliminar = BaseProveedorVentana(stacked_widget, "Eliminar Proveedor", "eliminar", "Eliminar")
+    ventana_actualizar = BaseProveedorVentana(stacked_widget, "Actualizar Proveedor", "actualizar", "Actualizar")
+    ventana_buscar = BaseProveedorVentana(stacked_widget, "Buscar Proveedor", "buscar", "Buscar")
 
-    stack.showMaximized()
-    stack.setWindowTitle("Gestión de Pedidos")
-    stack.show()
+    stacked_widget.addWidget(ventana_inicio)
+    stacked_widget.addWidget(ventana_agregar)
+    stacked_widget.addWidget(ventana_eliminar)
+    stacked_widget.addWidget(ventana_actualizar)
+    stacked_widget.addWidget(ventana_buscar)
+
+    stacked_widget.setFixedSize(750, 700)
+    stacked_widget.show()
     sys.exit(app.exec())
-
-if __name__ == "__main__":
-    main()
