@@ -1,14 +1,13 @@
 class Styles:
     """Clase para gestionar estilos de la interfaz de usuario de la aplicación de distribuidora."""
     
-    # Paleta de colores definida como variables de clase para fácil acceso y modificación
-    BACKGROUND = "#1d222e"  # Fondo oscuro para la aplicación
-    WIDGET_BG = "#4d5a62"   # Fondo para widgets como combo boxes y tablas
-    BUTTON_BG = "#40464b"   # Fondo para botones
+    # Paleta de colores definida como variables de clase
+    BACKGROUND = "#40464b"  # Fondo oscuro para la aplicación
+    BUTTON_BG = "#969a9a"   # Gris claro para botones
+    BUTTON_HOVER = "#676d71"  # Gris más oscuro para hover de botones
     BORDER = "#676d71"      # Color de bordes para widgets
-    TEXT = "#969fa3"        # Color de texto para la mayoría de los widgets
+    TEXT = "#1d222e"        # Color de texto para la mayoría de los widgets
     LABEL_TEXT = "#969a9a"  # Color de texto para etiquetas
-    BUTTON_HOVER = "#676d71"  # Cambio de color al pasar el ratón sobre botones
 
     @staticmethod
     def get_app_stylesheet():
@@ -17,6 +16,8 @@ class Styles:
             QWidget {{
                 background-color: {Styles.BACKGROUND};
                 color: {Styles.TEXT};
+                font-family: Arial, sans-serif;
+                font-size: 14px;
             }}
         """
 
@@ -28,14 +29,14 @@ class Styles:
                 background-color: {Styles.BUTTON_BG};
                 color: {Styles.TEXT};
                 border: 1px solid {Styles.BORDER};
-                padding: 5px;
+                padding: 8px;
                 border-radius: 3px;
             }}
             QPushButton:hover {{
                 background-color: {Styles.BUTTON_HOVER};
             }}
             QPushButton:pressed {{
-                background-color: {Styles.WIDGET_BG};
+                background-color: {Styles.BACKGROUND};
             }}
         """
 
@@ -44,10 +45,13 @@ class Styles:
         """Devuelve la hoja de estilos para widgets QComboBox."""
         return f"""
             QComboBox {{
-                background-color: {Styles.WIDGET_BG};
+                background-color: {Styles.BACKGROUND};
                 color: {Styles.TEXT};
                 border: 1px solid {Styles.BORDER};
-                padding: 3px;
+                padding: 5px;
+            }}
+            QComboBox:hover {{
+                background-color: {Styles.BUTTON_HOVER};
             }}
             QComboBox::drop-down {{
                 border: none;
@@ -64,33 +68,43 @@ class Styles:
         """Devuelve la hoja de estilos para widgets QDateEdit."""
         return f"""
             QDateEdit {{
-                background-color: {Styles.WIDGET_BG};
+                background-color: {Styles.BACKGROUND};
                 color: {Styles.TEXT};
                 border: 1px solid {Styles.BORDER};
-                padding: 3px;
+                padding: 5px;
+            }}
+            QDateEdit:hover {{
+                background-color: {Styles.BUTTON_HOVER};
             }}
             QDateEdit::drop-down {{
                 border: none;
             }}
+            QDateEdit::down-button, QDateEdit::up-button {{
+                background-color: {Styles.BUTTON_BG};
+            }}
         """
 
     @staticmethod
-    def get_table_view_stylesheet():
-        """Devuelve la hoja de estilos para widgets QTableView."""
+    def get_table_widget_stylesheet():
+        """Devuelve la hoja de estilos para widgets QTableWidget."""
         return f"""
-            QTableView {{
-                background-color: {Styles.WIDGET_BG};
+            QTableWidget {{
+                background-color: {Styles.BACKGROUND};
                 color: {Styles.TEXT};
                 border: 1px solid {Styles.BORDER};
                 gridline-color: {Styles.BORDER};
             }}
-            QTableView::item {{
+            QTableWidget::item {{
                 border: none;
+            }}
+            QTableWidget::item:selected {{
+                background-color: {Styles.BUTTON_HOVER};
             }}
             QHeaderView::section {{
                 background-color: {Styles.BUTTON_BG};
                 color: {Styles.TEXT};
                 border: 1px solid {Styles.BORDER};
+                padding: 4px;
             }}
         """
 
@@ -107,15 +121,15 @@ class Styles:
     @staticmethod
     def apply_styles(widget):
         """Aplica la hoja de estilos adecuada según el tipo de widget."""
-        from PyQt6.QtWidgets import QPushButton, QComboBox, QDateEdit, QTableView, QLabel
+        from PyQt6.QtWidgets import QPushButton, QComboBox, QDateEdit, QTableWidget, QLabel
         if isinstance(widget, QPushButton):
             widget.setStyleSheet(Styles.get_button_stylesheet())
         elif isinstance(widget, QComboBox):
             widget.setStyleSheet(Styles.get_combo_box_stylesheet())
         elif isinstance(widget, QDateEdit):
             widget.setStyleSheet(Styles.get_date_edit_stylesheet())
-        elif isinstance(widget, QTableView):
-            widget.setStyleSheet(Styles.get_table_view_stylesheet())
+        elif isinstance(widget, QTableWidget):
+            widget.setStyleSheet(Styles.get_table_widget_stylesheet())
         elif isinstance(widget, QLabel):
             widget.setStyleSheet(Styles.get_label_stylesheet())
         else:
