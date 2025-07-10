@@ -1,12 +1,12 @@
 class Styles:
     """Clase para gestionar estilos de la interfaz de usuario de la aplicación de distribuidora."""
     
-    # Paleta de colores definida como variables de clase
-    BACKGROUND = "#40464b"  # Fondo oscuro para la aplicación
+    # Paleta de colores más sobria
+    BACKGROUND = "#4d5a62"  # Fondo más claro y sobrio
     BUTTON_BG = "#969a9a"   # Gris claro para botones
-    BUTTON_HOVER = "#676d71"  # Gris más oscuro para hover de botones
-    BORDER = "#676d71"      # Color de bordes para widgets
-    TEXT = "#1d222e"        # Color de texto para la mayoría de los widgets
+    BUTTON_HOVER = "#676d71"  # Gris más oscuro para hover
+    BORDER = "#676d71"      # Color de bordes
+    TEXT = "#969fa3"        # Color de texto
     LABEL_TEXT = "#969a9a"  # Color de texto para etiquetas
 
     @staticmethod
