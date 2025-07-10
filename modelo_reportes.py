@@ -1,18 +1,14 @@
-import pymysql
-import pandas as pd
+import mysql.connector
 from datetime import datetime, timedelta
+import pandas as pd
+from modelo.db_config import DatabaseConnection
 
 class ReportesModel:
     def __init__(self):
         try:
-            self.conn = pymysql.connect(
-                host='localhost',
-                user='root',
-                password='Esen2025',
-                database='distribuidora',
-                charset='utf8mb4'
-            )
-        except pymysql.Error as e:
+            self.db = DatabaseConnection()
+            self.conn = self.db.get_connection()
+        except mysql.connector.Error as e:
             raise Exception(f"Error connecting to MariaDB: {e}")
 
     def get_clientes(self):
@@ -141,7 +137,7 @@ class ReportesModel:
         df.to_excel(r"C:\Users\jflor\OneDrive\Documents\ReportesProyectoApps\reporte_ventas.xlsx", index=False)
 
     def close(self):
-        self.conn.close()
+        self.db.close()
 
     def adjust_date_range(self, end_date, period):
         end_dt = datetime.strptime(end_date, "%Y-%m-%d")
