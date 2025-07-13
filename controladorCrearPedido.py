@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QMessageBox, QInputDialog
-from Distribuidora_pedidos.Modelo.modeloPedido import Modelo
+from Modelo.modeloPedido import Modelo
 from Vista.crearPedido import CrearPedidos
 
 class ControladorCrearPedidos:
