@@ -52,3 +52,14 @@ def eliminar_usuario(usuario):
     conn.commit()
     conn.close()
 
+
+def validar_credenciales(usuario, clave):
+    conn = conectar()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM Usuario WHERE nombreUsuario = %s AND password = %s", (usuario, clave))
+    usuario_encontrado = cursor.fetchone()
+    conn.close()
+
+    if usuario_encontrado:
+        return True, usuario_encontrado  
+    return False, None
