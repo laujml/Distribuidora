@@ -2,11 +2,11 @@ from PyQt6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
     QListWidget, QListWidgetItem
 )
-
 from PyQt6.QtCore import Qt
 from Vista.crearPedido import CrearPedidos 
-
 import ventanaPedido 
+from main_clientes import MainClientes
+from main_proveedores import MainProveedores
 
 class MenuGestionPedidos(QWidget):
     def __init__(self):
@@ -52,14 +52,16 @@ class MenuGestionPedidos(QWidget):
         if index == 0:  # DashBoard
             self.layout_derecha.addWidget(QLabel("Bienvenido al Dashboard"))
         elif index == 1:  # Clientes
-            self.layout_derecha.addWidget(QLabel("Ventana de Clientes"))
+            self.ventana_clientes = MainClientes()
+            self.layout_derecha.addWidget(self.ventana_clientes)
         elif index == 2:  # Pedidos
             self.ventana_pedidos = ventanaPedido.VentanaPedidos()
             self.layout_derecha.addWidget(self.ventana_pedidos)
         elif index == 3:  # Productos
             self.layout_derecha.addWidget(QLabel("Ventana de Productos"))
         elif index == 4:  # Proveedores
-            self.layout_derecha.addWidget(QLabel("Ventana de Proveedores"))
+            self.ventana_proveedores = MainProveedores()
+            self.layout_derecha.addWidget(self.ventana_proveedores)
         elif index == 5:  # Reportes
             self.layout_derecha.addWidget(QLabel("Ventana de Reportes"))
         elif index == 6:  # Cerrar sesión
