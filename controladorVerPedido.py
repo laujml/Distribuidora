@@ -1,4 +1,4 @@
-import Modelo.modeloDato as Modelo
+from Distribuidora_pedidos.Modelo.modeloPedido import Modelo
 from Vista.verPedidos import VerPedidos
 
 class VerPedidosControlador:
