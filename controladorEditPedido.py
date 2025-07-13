@@ -12,7 +12,6 @@ class ControladorEditarPedidos(ControladorCrearPedidos):
         self.pedido_actual = None
         
         # Conectar señales con métodos del controlador
-        # Conectar señales de la vista con métodos del controlador
         self.vista.pedido_seleccionado.connect(self.cargar_pedido_en_formulario)
         self.vista.guardar_cambios.connect(self.guardar_pedido)
 
