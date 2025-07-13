@@ -1,75 +1,40 @@
-from PyQt6.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
-    QListWidget, QListWidgetItem
-)
-from PyQt6.QtCore import Qt
-from Vista.crearPedido import CrearPedidos 
-import ventanaPedido 
-from main_clientes import MainClientes
-from main_proveedores import MainProveedores
+# MAIN
+import sys
+from PyQt6.QtWidgets import QApplication, QStackedWidget
+from vista.pantalla_bienvenida import PantallaBienvenida
+from vista.pantalla_login import PantallaLogin
+from vista.pantalla_administrador import PantallaAdministrador
+from controlador.login_controlador import LoginControlador
+from vista.pantalla_dashboard import PantallaDashboard
 
-class MenuGestionPedidos(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Sistema de Gestión de Pedidos de Distribuidora Josue")
-        self.menu()
+def main():
+    app = QApplication(sys.argv)
+    app.setStyleSheet("QWidget { background-color: #4d5a62; }")
 
-    def menu(self):
-        layout_principal = QHBoxLayout(self)
+    stack = QStackedWidget()
 
-        # Menú lateral
-        self.lista_menu = QListWidget()
-        self.lista_menu.currentRowChanged.connect(self.entrar_ventana)
-        layout_principal.addWidget(self.lista_menu, 1)
+    # Creacion de pantallas
+    bienvenida = PantallaBienvenida(stack)
+    login = PantallaLogin(stack)
+    dashboard = PantallaDashboard(stack,usuario="Cliente") 
+    admin = PantallaAdministrador(stack)
 
-        # Panel derecho (contenido dinámico)
-        self.widget_derecha = QWidget()
-        self.layout_derecha = QVBoxLayout(self.widget_derecha)
-        layout_principal.addWidget(self.widget_derecha, 3)
+    #Controlador del login
+    login_controlador = LoginControlador(login, stack)
 
-        # Ítems del menú
-        opciones = [
-            "DashBoard",
-            "Clientes",
-            "Pedidos",        
-            "Productos",
-            "Proveedores",
-            "Reportes",
-            "Cerrar Sesión"
-        ]
-        for opcion in opciones:
-            self.lista_menu.addItem(QListWidgetItem(opcion))
+    # Agregar pantallas al stack
+    stack.addWidget(bienvenida)   # Índice 0
+    stack.addWidget(login)        # Índice 1
+    stack.addWidget(dashboard)    # Índice 2
+    stack.addWidget(admin)        # Índice 3
 
-    def limpiar_derecha(self):
-        while self.layout_derecha.count() > 0:
-            item = self.layout_derecha.takeAt(0)
-            widget = item.widget()
-            if widget is not None:
-                widget.deleteLater()
+    #Pantalla de bienvenida al inicio
+    stack.setCurrentIndex(0)
+    stack.setWindowTitle("Gestión de Pedidos")
+    stack.showMaximized()
+    stack.show()
 
-    def entrar_ventana(self, index):
-        self.limpiar_derecha()
-        if index == 0:  # DashBoard
-            self.layout_derecha.addWidget(QLabel("Bienvenido al Dashboard"))
-        elif index == 1:  # Clientes
-            self.ventana_clientes = MainClientes()
-            self.layout_derecha.addWidget(self.ventana_clientes)
-        elif index == 2:  # Pedidos
-            self.ventana_pedidos = ventanaPedido.VentanaPedidos()
-            self.layout_derecha.addWidget(self.ventana_pedidos)
-        elif index == 3:  # Productos
-            self.layout_derecha.addWidget(QLabel("Ventana de Productos"))
-        elif index == 4:  # Proveedores
-            self.ventana_proveedores = MainProveedores()
-            self.layout_derecha.addWidget(self.ventana_proveedores)
-        elif index == 5:  # Reportes
-            self.layout_derecha.addWidget(QLabel("Ventana de Reportes"))
-        elif index == 6:  # Cerrar sesión
-            self.close()
+    sys.exit(app.exec())
 
 if __name__ == "__main__":
-    app = QApplication([])
-    window = MenuGestionPedidos()
-    window.resize(800, 600)
-    window.show()
-    app.exec()
+    main()
