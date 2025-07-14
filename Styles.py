@@ -123,31 +123,78 @@ class Styles:
                 selection-color: {Styles.PRIMARY_TEXT};
             }}
 
+            /* Estilos corregidos para QSpinBox y QDoubleSpinBox */
             QSpinBox::up-button, QDoubleSpinBox::up-button {{
-            subcontrol-origin: border;
-            subcontrol-position: top right;
-            width: 16px;
-            border-left: 1px solid {Styles.BORDER};
-            border-bottom: 1px solid {Styles.BORDER};
-            background-color: {Styles.WHITE};
+                subcontrol-origin: border;
+                subcontrol-position: top right;
+                width: 20px;
+                height: 12px;
+                border-left: 1px solid {Styles.BORDER};
+                border-bottom: 1px solid {Styles.BORDER};
+                background-color: {Styles.WHITE};
+                border-top-right-radius: 4px;
             }}
 
             QSpinBox::down-button, QDoubleSpinBox::down-button {{
                 subcontrol-origin: border;
                 subcontrol-position: bottom right;
-                width: 16px;
+                width: 20px;
+                height: 12px;
                 border-left: 1px solid {Styles.BORDER};
                 border-top: 1px solid {Styles.BORDER};
                 background-color: {Styles.WHITE};
+                border-bottom-right-radius: 4px;
             }}
 
-            /* Cambiar color de fondo de botones al hacer hover */
+            /* Hover para los botones */
             QSpinBox::up-button:hover, QDoubleSpinBox::up-button:hover {{
-                background-color: #e6f0ff;
+                background-color: #e6f3ff;
             }}
 
             QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover {{
-                background-color: #e6f0ff;
+                background-color: #e6f3ff;
+            }}
+
+            /* Pressed para los botones */
+            QSpinBox::up-button:pressed, QDoubleSpinBox::up-button:pressed {{
+                background-color: #cce7ff;
+            }}
+
+            QSpinBox::down-button:pressed, QDoubleSpinBox::down-button:pressed {{
+                background-color: #cce7ff;
+            }}
+
+            /* Flechas triangulares más pequeñas y precisas */
+            QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {{
+                width: 0;
+                height: 0;
+                border-left: 2px solid transparent;
+                border-right: 2px solid transparent;
+                border-bottom: 3px solid {Styles.PRIMARY_TEXT};
+            }}
+
+            QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {{
+                width: 0;
+                height: 0;
+                border-left: 2px solid transparent;
+                border-right: 2px solid transparent;
+                border-top: 3px solid {Styles.PRIMARY_TEXT};
+            }}
+
+            /* Flechas cuando están presionadas - más pequeñas */
+            QSpinBox::up-arrow:pressed, QDoubleSpinBox::up-arrow:pressed {{
+                width: 0;
+                height: 0;
+                border-left: 2px solid transparent;
+                border-right: 2px solid transparent;
+                border-bottom: 3px solid #2a3a4a;
+            }}
+
+            QSpinBox::down-arrow:pressed, QDoubleSpinBox::down-arrow:pressed {{
+                width: 0;
+                height: 0;
+                border-left: 2px solid transparent;
+                border-right: 2px solid transparent;
+                border-top: 3px solid #2a3a4a;
             }}
         """
-    
