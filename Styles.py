@@ -1,11 +1,32 @@
+from PyQt6.QtWidgets import QApplication, QListWidget, QWidget
+
 class Styles:
     """Estilos generales reutilizables para la aplicación."""
 
-    PRIMARY_TEXT = "#4d5a62"  # Azul sobrio
-    BACKGROUND = "#4d5a62"    # Fondo gris oscuro general
+    PRIMARY_TEXT = "#4d5a62"
+    BACKGROUND = "#4d5a62"
     WHITE = "#ffffff"
     BORDER = "#dee2e6"
     HIGHLIGHT = "#f5f7fa"
+    MENU_ANCHO = 130
+    PANEL_PEDIDOS_ANCHO = 120
+
+    @staticmethod
+    def aplicar_estilo_global(widget_raiz: QWidget, menu: QListWidget):
+        """
+        Aplica estilos a toda la aplicación y al menú lateral.
+        """
+        # Configura el menú
+        menu.setObjectName("menuLateral")
+        menu.setFixedWidth(Styles.MENU_ANCHO)
+
+        # Aplica hoja de estilo al widget raíz
+        widget_raiz.setStyleSheet(Styles.get_stylesheet())
+        
+
+    def aplicar_estilo_panel_pedidos(panel: QListWidget):
+        panel.setObjectName("panelIzquierdo")
+        panel.setFixedWidth(Styles.PANEL_PEDIDOS_ANCHO)    
 
     @staticmethod
     def get_stylesheet():
