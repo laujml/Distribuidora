@@ -24,8 +24,8 @@ class PantallaDashboard(QWidget):
         menu_layout.setContentsMargins(0, 0, 0, 0)
         menu_layout.setSpacing(0)
 
-        menu = MenuLateral(stack=self.stack, opciones=[
-            "Clientes", "Pedidos", "Productos", 
+       menu = MenuLateral(stack=self.stack, opciones=[
+            "Dashboard", "Clientes", "Pedidos", "Productos", 
             "Proveedores", "Reportes", "Cerrar sesión"
         ])
         menu_layout.addWidget(menu)
@@ -41,96 +41,7 @@ class PantallaDashboard(QWidget):
 
         layout_principal.addWidget(self.panel_dashboard, 3)
 
-        self.setStyleSheet("""
-            /* Fondo principal */
-            PantallaDashboard {
-                background-color: #4d5a62;
-            }
-            
-            /* Panel de contenido - completamente transparente */
-            QWidget#panelContenido {
-                background-color: transparent;
-                border: none;
-            }
-            
-            /* Tarjetas blancas con estilos internos */
-            QFrame#tarjeta {
-                background-color: white;
-                border-radius: 20px;
-                padding: 25px;
-                min-width: 300px;
-                border: 1px solid #e0e0e0;
-            }
-            
-            /* Todos los labels dentro de tarjetas */
-            QFrame#tarjeta QLabel {
-                background-color: white; 
-                color: #4d5a62;        
-                border: none;            
-                padding: 0;              
-                margin: 0;               
-            }
-            
-            /* Títulos de sección */
-            QLabel#titulo {
-                color: white;
-                font-size: 32px;
-                font-weight: bold;
-                margin-bottom: 30px;
-                background-color: transparent;
-            }
-            /* Botón con hover */
-            QPushButton {
-                background-color: white;
-                color: #4d5a62;
-                border: 2px solid #4d5a62;
-                padding: 12px 24px;
-                border-radius: 8px;
-                font-size: 16px;
-                font-weight: bold;
-                min-width: 180px;
-            }
-    
-            QPushButton:hover {
-                background-color: #f0f0f0;  /* Gris muy claro al pasar mouse */
-            }
-    
-            QPushButton:pressed {
-                background-color: #e0e0e0;  
-                border: 2px solid #3a454b;  
-            }
-
-            /* Texto dentro de tarjetas blancas */
-            QFrame#tarjeta QLabel {
-                background-color: white;
-                color: #4d5a62;
-                font-size: 16px;
-                font-weight: bold;
-                padding: 2px 0;
-                margin: 0;
-            }
-    
-            /* Títulos de sección dentro de tarjetas */
-            QFrame#tarjeta QLabel#subtitulo {
-                font-size: 18px;
-                font-weight: bold;
-                margin-bottom: 10px;
-            }
-            
-            /* Valores numéricos */
-            QFrame#tarjeta QLabel#dato {
-                font-size: 20px;
-                margin: 5px 0 15px 0;
-            }
-            
-            /* Items de inventario */
-            QFrame#tarjeta QLabel#dato_inventario {
-                font-size: 16px;
-                margin: 4px 0;
-            }
-        """)
-        
-        
+        self.setStyleSheet(Styles.get_stylesheet() + Styles.get_estilo_dashboard())
         self.panel_dashboard.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self.crear_dashboard()
 
