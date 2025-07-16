@@ -45,7 +45,11 @@ class Modelo:
         for i, detalle in enumerate(detalles, start = 1):
             id_producto, cantidad, subtotal = detalle #desempaqueta la lista de tuplas ("detalles", que en la vista esta como productos_selecionados), Cada valor dentro de detalle se asigna a la variable correspondiente en orden.
             self.agregar_detalle(id_pedido, i, id_producto, cantidad, subtotal) 
-
+    def obtener_stock_producto(self, id_producto):
+        self.cursor.execute("SELECT stockActual FROM Productos WHERE ID_Productos = %s", (id_producto,))
+        resultado = self.cursor.fetchone()
+        return resultado[0] if resultado else 0
+        
     #Modelos para ver pedidos
     def obtener_datos_pedido(self):
         cursor_dict = self.conexion.cursor(dictionary=True)
