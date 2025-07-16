@@ -1,46 +1,114 @@
 from modelo_reportes import ReportesModel
+from vista_reportes import ReportesView
 
 class ReportesController:
     def __init__(self, view):
-        self.model = ReportesModel()
+        """
+        Inicializa el controlador con la vista proporcionada.
+
+        Args:
+            view (ReportesView): La vista de reportes.
+        """
+        self.model = None
         self.view = view
-        self.view.btn_exportar.clicked.connect(self.exportar_a_excel)
-        self.view.btn_actualizar.clicked.connect(self.actualizar_datos)
-        self.mostrar_reporte("Semanal")  # Valor por defecto
+        self.connect_signals()
+        self.load_initial_data()
 
-    def mostrar_reporte(self, periodo):
-        self.view.set_periodo(periodo)
-        end_date = datetime.now().strftime("%Y-%m-%d")
-        start_date = self.model.adjust_date_range(end_date, periodo)
+    def connect_signals(self):
+        """
+        Conecta los signals de la vista a los métodos correspondientes.
+        """
+        self.view.buscar_btn.clicked.connect(self.update_reports)
+        self.view.limpiar_btn.clicked.connect(self.clear_filters)
+        self.view.btn_exportar.clicked.connect(self.export_to_excel)
+        self.view.btn_actualizar.clicked.connect(self.update_reports)
 
-        # Datos de ventas por fecha
-        ventas = self.model.get_ventas_por_fecha(start_date, end_date)
-        fechas = [v[0] for v in ventas]
-        totales = [v[1] for v in ventas]
-        self.view.actualizar_grafico_ventas(fechas, totales)
+    def load_initial_data(self):
+        """
+        Carga los datos iniciales de la base de datos.
+        """
+        try:
+            self.model = ReportesModel()
+            clientes = self.model.get_clientes()
+            productos = self.model.get_productos()
+            self.view.populate_clientes(clientes)
+            self.view.populate_productos(productos)
+            self.update_reports()
+        except Exception as e:
+            self.view.show_error(str(e))
 
-        # Top clientes
-        top_clientes = self.model.get_top_clientes(start_date, end_date)
-        clientes = [c[0] for c in top_clientes]
-        totales_clientes = [c[1] for c in top_clientes]
-        self.view.actualizar_grafico_top_clientes(clientes, totales_clientes)
+    def update_reports(self):
+        """
+        Actualiza los reportes con los filtros seleccionados.
+        """
+        try:
+            filters = self.view.get_filter_values()
+            start_date = filters['start_date']
+            end_date = filters['end_date']
+            if start_date > end_date:
+                self.view.show_error("La fecha de inicio no puede ser posterior a la fecha de fin.")
+                return
 
-        # Productos más y menos vendidos
-        productos_vendidos = self.model.get_productos_vendidos(start_date, end_date)
-        productos = [p[0] for p in productos_vendidos]
-        cantidades = [p[1] for p in productos_vendidos]
-        self.view.actualizar_grafico_productos(productos, cantidades)
+            cliente_id = filters['cliente_id']
+            producto_id = filters['producto_id']
+            period = filters['period']
 
-        # Detalle de ventas para la tabla
-        detalle_ventas = self.model.get_detalle_ventas(start_date, end_date)
-        self.view.actualizar_tabla(detalle_ventas)
+            if period == "Semanal":
+                start_date = self.model.adjust_date_range(end_date, period)
+                self.view.set_start_date(start_date)
 
-    def exportar_a_excel(self):
-        end_date = datetime.now().strftime("%Y-%m-%d")
-        start_date = self.model.adjust_date_range(end_date, self.view.periodo)
-        self.model.export_to_excel(start_date, end_date)
+            total_ventas, total_pedidos = self.model.get_total_ventas(start_date, end_date, cliente_id)
+            top_cliente = self.model.get_top_cliente(start_date, end_date)
+            productos_vendidos = self.model.get_productos_vendidos(start_date, end_date, producto_id)
+            detalle_ventas = self.model.get_detalle_ventas(start_date, end_date)
+            ventas_por_fecha = self.model.get_ventas_por_fecha(start_date, end_date)
+            top_clientes = self.model.get_top_clientes(start_date, end_date)
 
-    def actualizar_datos(self):
-        self.model.close()
-        self.model = ReportesModel()
-        self.mostrar_reporte(self.view.periodo)
+            best_products = productos_vendidos[-5:] if productos_vendidos else []
+            worst_products = productos_vendidos[:5] if productos_vendidos else []
+            top_producto = best_products[-1][0] if best_products else '-'
+
+            self.view.update_summary(total_ventas, total_pedidos, top_producto, top_cliente)
+            self.view.actualizar_tabla(detalle_ventas)
+            self.view.update_graphs(ventas_por_fecha, top_clientes, best_products, worst_products)
+        except Exception as e:
+            self.view.show_error(str(e))
+
+    def clear_filters(self):
+        """
+        Limpia los filtros y actualiza los reportes.
+        """
+        self.view.reset_filters()
+        self.update_reports()
+
+    def export_to_excel(self):
+        """
+        Exporta los datos a un archivo Excel.
+        """
+        try:
+            filters = self.view.get_filter_values()
+            filepath = self.view.get_export_path()
+            if not filepath:
+                return
+            success = self.model.export_to_excel(filters['start_date'], filters['end_date'], filepath)
+            if success:
+                self.view.show_info("Reporte exportado exitosamente.")
+        except Exception as e:
+            self.view.show_error(str(e))
+
+    def mostrar_reporte(self, period):
+        """
+        Muestra el reporte para el período seleccionado.
+
+        Args:
+            period (str): Período seleccionado ("Semanal" o "Mensual").
+        """
+        self.view.set_periodo(period)
+        self.update_reports()
+
+    def close(self):
+        """
+        Cierra la conexión con la base de datos.
+        """
+        if self.model:
+            self.model.close()
