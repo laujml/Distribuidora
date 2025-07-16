@@ -3,7 +3,7 @@ from Vista.verPedidos import VerPedidos
 
 class VerPedidosControlador:
     def __init__(self):
-        self.modelo = Modelo.Modelo()
+        self.modelo = Modelo()
         self.vista = VerPedidos()
         self.pedidos = []
         self.pedido_actual = None
