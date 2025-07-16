@@ -54,7 +54,17 @@ class ControladorEditarPedidos(ControladorCrearPedidos):
 
         try:
             datos_formulario = self.vista.obtener_datos_formulario()
-            
+
+            # Verificar si hay cliente
+            if not datos_formulario['texto_cliente'].strip():
+                QMessageBox.warning(self.vista, "Advertencia", "Debe seleccionar un cliente para guardar el pedido.")
+                return
+
+            # Verificar si hay productos
+            if not datos_formulario['detalles']:
+                QMessageBox.warning(self.vista, "Advertencia", "Debe agregar al menos un producto al pedido.")
+                return
+
             # Extraer ID del cliente del texto
             id_cliente = datos_formulario['texto_cliente'].split("-")[0].strip() if "-" in datos_formulario['texto_cliente'] else datos_formulario['texto_cliente']
             id_pedido = self.pedido_actual["numero"]
@@ -69,7 +79,7 @@ class ControladorEditarPedidos(ControladorCrearPedidos):
                 datos_formulario['plazo'], 
                 datos_formulario['detalles']
             )
-            
+
             if exito:
                 QMessageBox.information(self.vista, "Éxito", f"Pedido #{id_pedido} actualizado correctamente.")
                 # Recargar datos
@@ -77,22 +87,15 @@ class ControladorEditarPedidos(ControladorCrearPedidos):
                 self.vista.actualizar_lista_pedidos(self.pedidos)
             else:
                 QMessageBox.critical(self.vista, "Error", "Ocurrió un error al actualizar el pedido.")
-                
+
         except Exception as e:
             QMessageBox.critical(self.vista, "Error", f"Error al guardar cambios: {e}")
+
 
     def refrescar_datos(self):
         """Refresca los datos desde el modelo"""
         
         self.cargar_datos_iniciales()
-
-    #def mostrar_vista(self):
-        #"""Muestra la vista"""
-        #self.vista.show()
-
-    #def get_vista(self):
-        #"""Devuelve la vista"""
-        #return self.vista
 
     def obtener_pedidos(self):
         """Getter para obtener la lista de pedidos"""
