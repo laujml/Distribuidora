@@ -1,100 +1,140 @@
 from PyQt6.QtWidgets import (
-    QApplication, QWidget, QPushButton, QVBoxLayout,
-    QLabel, QStackedLayout, QSizePolicy
+    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
+    QListWidget, QListWidgetItem, QStackedWidget
 )
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import QSize, Qt, QTimer
+from PyQt6.QtGui import QIcon
+import ventanaPedido 
+from Styles import Styles 
 
-from Controlador.controladorCrearPedido import ControladorCrearPedidos
-from Controlador.controladorEditPedido import ControladorEditarPedidos
-from Controlador.controladorVerPedido import VerPedidosControlador
-
-class VentanaPedidos(QWidget):
+class MenuGestionPedidos(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Pedidos")
+        self.setWindowTitle("Sistema de Gestión de Pedidos de Distribuidora Josue")
         
-        # Stack de páginas
-        self.stack = QStackedLayout()
+        # Diccionario para cachear widgets y evitar recrearlos constantemente
+        self.widgets_cache = {}
         
-        # Página principal (menú)
-        self.pagina_menu = QWidget()
-        layout_menu = QVBoxLayout()
+        # Variable para trackear el índice actual
+        self.current_index = -1
         
-        self.titulo = QLabel("Gestión de Pedidos")
-        self.titulo.setObjectName("primerLabel") 
-        self.titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.menu()
+    
+    def menu(self):
+        layout_principal = QHBoxLayout(self)
         
-        btn_crear = QPushButton("Crear Pedido")
-        btn_crear.clicked.connect(self.mostrar_crear_pedido)
+        # Menú lateral (layout vertical con logo y lista)
+        layout_menu_lateral = QVBoxLayout()
+        layout_principal.addLayout(layout_menu_lateral, 1)
         
-        btn_ver = QPushButton("Ver y Cancelar Pedidos")
-        btn_ver.clicked.connect(self.mostrar_ver_pedido)
+        # Lista del menú
+        self.lista_menu = QListWidget()
+        self.lista_menu.setObjectName("menuLateral")
+        self.lista_menu.currentRowChanged.connect(self.entrar_ventana_seguro)
+        layout_menu_lateral.addWidget(self.lista_menu)
         
-        btn_editar = QPushButton("Editar Pedidos")
-        btn_editar.clicked.connect(self.mostrar_editar_pedido)
+        logo_item = QListWidgetItem()
+        logo_icon = QIcon("Recursos/logo.jpg")
+        logo_item.setIcon(logo_icon)
+        logo_item.setFlags(Qt.ItemFlag.NoItemFlags)
+        self.lista_menu.setIconSize(QSize(100, 100))
+        self.lista_menu.addItem(logo_item)
         
-        layout_menu.addWidget(self.titulo)
-        layout_menu.addWidget(btn_crear)
-        layout_menu.addWidget(btn_ver)
-        layout_menu.addWidget(btn_editar)
+        # Ítems del menú
+        opciones = [
+            "DashBoard",
+            "Clientes", 
+            "Pedidos",        
+            "Productos",
+            "Proveedores",
+            "Reportes",
+            "Cerrar Sesión"
+        ]
         
-        self.pagina_menu.setLayout(layout_menu)
+        for opcion in opciones:
+            self.lista_menu.addItem(QListWidgetItem(opcion))
         
-        # Controladores
-        self.controlador_crear = ControladorCrearPedidos()
-        self.pagina_crear = self.controlador_crear.get_vista()
-        self.pagina_crear.btn_regresar.clicked.connect(self.volver_menu)
+        # Panel derecho 
+        self.stacked_widget = QStackedWidget()
+        layout_principal.addWidget(self.stacked_widget, 3)
         
-        self.controlador_ver = VerPedidosControlador()
-        self.pagina_ver_pedidos = self.controlador_ver.get_vista()
-        self.pagina_ver_pedidos.btn_regresar.clicked.connect(self.volver_menu)
+        # Precargar VentanaPedidos
+        try:
+            ventana_pedidos = ventanaPedido.VentanaPedidos()
+            self.widgets_cache[3] = ventana_pedidos
+            self.stacked_widget.addWidget(ventana_pedidos)
+        except Exception as e:
+            error_widget = QLabel(f"Error al precargar Pedidos: {str(e)}")
+            error_widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.widgets_cache[3] = error_widget
+            self.stacked_widget.addWidget(error_widget)
+    
+    def entrar_ventana_seguro(self, index):
+        """Versión segura que evita conflictos al cambiar entre ventanas"""
+        if index == self.current_index:
+            return
+        QTimer.singleShot(50, lambda: self.entrar_ventana(index))
+    
+    def entrar_ventana(self, index):
+        """Maneja el cambio de ventana con caché de widgets"""
+        self.current_index = index
         
-        self.controlador_editar = ControladorEditarPedidos()
-        self.pagina_editar = self.controlador_editar.get_vista()
-        self.pagina_editar.btn_regresar.clicked.connect(self.volver_menu)
+        if index in self.widgets_cache:
+            widget = self.widgets_cache[index]
+            self.stacked_widget.setCurrentWidget(widget)
+            return
         
-        # Agregar páginas al stack
-        self.stack.addWidget(self.pagina_menu)
-        self.stack.addWidget(self.pagina_crear)
-        self.stack.addWidget(self.pagina_ver_pedidos)
-        self.stack.addWidget(self.pagina_editar)
+        widget = None
         
-        main_layout = QVBoxLayout()
-        main_layout.addLayout(self.stack)
-        self.setLayout(main_layout)
-        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        if index == 1:  # DashBoard
+            widget = QLabel("Bienvenido al Dashboard")
+            widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            
+        elif index == 2:  # Clientes
+            widget = QLabel("Ventana de Clientes")
+            widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            
+        elif index == 4:  # Productos
+            widget = QLabel("Ventana de Productos")
+            widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            
+        elif index == 5:  # Proveedores
+            widget = QLabel("Ventana de Proveedores")
+            widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            
+        elif index == 6:  # Reportes
+            widget = QLabel("Ventana de Reportes")
+            widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            
+        elif index == 7:  # Cerrar sesión
+            self.close()
+            return
+        
+        if widget:
+            self.widgets_cache[index] = widget
+            self.stacked_widget.addWidget(widget)
+            self.stacked_widget.setCurrentWidget(widget)
 
-    def mostrar_crear_pedido(self):
-        self.stack.setCurrentWidget(self.pagina_crear)
-
-    def mostrar_editar_pedido(self):
-        self.controlador_editar = ControladorEditarPedidos()  # ← Nueva instancia cada vez
-        self.pagina_editar = self.controlador_editar.get_vista()
-        self.pagina_editar.btn_regresar.clicked.connect(self.volver_menu)
-
-        self.stack.insertWidget(3, self.pagina_editar)
-        self.stack.setCurrentWidget(self.pagina_editar)
-
-    def mostrar_ver_pedido(self):
-        # Eliminar la vista anterior del stack
-        self.stack.removeWidget(self.pagina_ver_pedidos)
-        self.pagina_ver_pedidos.deleteLater()
-
-        # Crear una nueva instancia del controlador
-        self.controlador_ver = VerPedidosControlador()
-        self.pagina_ver_pedidos = self.controlador_ver.get_vista()
-        self.pagina_ver_pedidos.btn_regresar.clicked.connect(self.volver_menu)
-
-        # Agregar la nueva vista al stack
-        self.stack.addWidget(self.pagina_ver_pedidos)
-        self.stack.setCurrentWidget(self.pagina_ver_pedidos)
-
-    def volver_menu(self):
-        self.stack.setCurrentWidget(self.pagina_menu)
+    def limpiar_cache(self):
+        """Limpia el caché de widgets si es necesario"""
+        for index, widget in self.widgets_cache.items():
+            if widget:
+                widget.setParent(None)
+                widget.deleteLater()
+        self.widgets_cache.clear()
+    
+    def closeEvent(self, event):
+        """Limpia recursos al cerrar"""
+        self.limpiar_cache()
+        event.accept()
 
 if __name__ == "__main__":
     app = QApplication([])
-    window = VentanaPedidos()
+    
+    window = MenuGestionPedidos()
+    Styles.aplicar_estilo_global(window, window.lista_menu)
+    
     window.resize(800, 600)
     window.show()
+    
     app.exec()
