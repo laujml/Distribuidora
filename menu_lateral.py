@@ -64,16 +64,19 @@ class MenuLateral(QWidget):
         self.opcion_cambiada_callback = None
 
     def on_opcion_seleccionada(self, texto):
-        print(f">>> Opción seleccionada: {texto}")
+       print(f">>> Opción seleccionada: {texto}")
 
         # Aqui irian las demas pestañas del menu lateral. EJEMPLO
-        """
+        if texto == "Dashboard":
+            self.stack.setCurrentIndex(2)
+            """
         if texto == "Clientes":
             self.stack.setCurrentIndex(1)
         elif texto == "Pedidos":
             self.stack.setCurrentIndex(2)
         ...
         """
+
 
         if self.opcion_cambiada_callback:
             self.opcion_cambiada_callback(texto)
