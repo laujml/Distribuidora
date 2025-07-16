@@ -215,3 +215,77 @@ class Styles:
                 border-top: 3px solid #2a3a4a;
             }}
         """
+        def get_estilo_dashboard():
+        return """
+            /* Fondo principal */
+            PantallaDashboard {
+                background-color: #4d5a62;
+            }
+            
+            QWidget#panelContenido {
+                background-color: transparent;
+                border: none;
+            }
+
+            QFrame#tarjeta {
+                background-color: white;
+                border-radius: 20px;
+                padding: 25px;
+                min-width: 300px;
+                border: 1px solid #e0e0e0;
+            }
+
+            QFrame#tarjeta QLabel {
+                background-color: white; 
+                color: #4d5a62;        
+                border: none;            
+                padding: 0;              
+                margin: 0;               
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            QLabel#titulo {
+                color: white;
+                font-size: 32px;
+                font-weight: bold;
+                margin-bottom: 30px;
+                background-color: transparent;
+            }
+
+            QPushButton {
+                background-color: white;
+                color: #4d5a62;
+                border: 2px solid #4d5a62;
+                padding: 12px 24px;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: bold;
+                min-width: 180px;
+            }
+
+            QPushButton:hover {
+                background-color: #f0f0f0;
+            }
+
+            QPushButton:pressed {
+                background-color: #e0e0e0;
+                border: 2px solid #3a454b;
+            }
+
+            QFrame#tarjeta QLabel#subtitulo {
+                font-size: 18px;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+
+            QFrame#tarjeta QLabel#dato {
+                font-size: 20px;
+                margin: 5px 0 15px 0;
+            }
+
+            QFrame#tarjeta QLabel#dato_inventario {
+                font-size: 16px;
+                margin: 4px 0;
+            }
+        """
