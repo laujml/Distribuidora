@@ -23,10 +23,9 @@ class Styles:
         # Aplica hoja de estilo al widget raíz
         widget_raiz.setStyleSheet(Styles.get_stylesheet())
         
-
-    def aplicar_estilo_panel_pedidos(panel: QListWidget):
+    def panel_izquierdo(panel: QWidget):
         panel.setObjectName("panelIzquierdo")
-        panel.setFixedWidth(Styles.PANEL_PEDIDOS_ANCHO)    
+        panel.setFixedWidth(Styles.PANEL_PEDIDOS_ANCHO) 
 
     @staticmethod
     def get_stylesheet():
@@ -42,6 +41,13 @@ class Styles:
             QLabel {{
                 color: #f0f0f0;
                 background-color: transparent;
+            }}
+
+            QLabel#primerLabel{{
+                color: #f0f0f0;
+                background-color: transparent;
+                font-size: 25px;
+                font-weight: bold;
             }}
 
             QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox,QDateEdit {{
@@ -97,16 +103,6 @@ class Styles:
                 background-color: {Styles.WHITE};
                 color: {Styles.PRIMARY_TEXT};
                 border-right: 1px solid {Styles.BORDER};
-            }}
-
-            /* Estilo para el número de pedido */
-            QLabel#pedidoNumero {{
-                background-color: {Styles.WHITE};
-                color: {Styles.PRIMARY_TEXT};
-                font-size: 14px;
-                font-weight: bold;
-                padding: 6px 8px;
-                border-radius: 4px;
             }}
 
             QListWidget#panelIzquierdo {{
