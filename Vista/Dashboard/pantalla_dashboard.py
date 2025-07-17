@@ -1,7 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QFrame
 from PyQt6.QtCore import Qt
-from controlador.dashboard_controlador import obtener_datos_dashboard
-from recursos.Styles import Styles
+from Controlador.Dashboard.dashboard_controlador import obtener_datos_dashboard
 
 class PantallaDashboard(QWidget):
     def __init__(self, stack):
