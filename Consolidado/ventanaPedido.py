@@ -4,9 +4,9 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt
 
-from controlador.controladorCrearPedido import ControladorCrearPedidos
-from controlador.controladorEditPedido import ControladorEditarPedidos
-from controlador.controladorVerPedido import VerPedidosControlador
+from Controlador.Pedido.controladorCrearPedido import ControladorCrearPedidos
+from Controlador.Pedido.controladorEditPedido import ControladorEditarPedidos
+from Controlador.Pedido.controladorVerPedido import VerPedidosControlador
 
 class VentanaPedidos(QWidget):
     def __init__(self):
