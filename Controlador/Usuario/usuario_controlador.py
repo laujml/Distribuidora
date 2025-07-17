@@ -1,5 +1,5 @@
 # controlador/usuario_controlador.py
-from modelo.usuario_modelo import (
+from Modelo.usuario_modelo import (
     obtener_usuarios,
     agregar_usuario,
     modificar_usuario,
