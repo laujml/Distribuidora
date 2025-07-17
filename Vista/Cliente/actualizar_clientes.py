@@ -150,7 +150,6 @@ class ActualizarClientes(QWidget):
         if confirm == QMessageBox.StandardButton.Yes:
             ok, msg = self.controller.actualizar_cliente(id_cliente, nombre, correo, telefono, direccion)
             self.mostrar_popup(msg, ok)
-            # Los campos se mantienen después de actualizar para que el usuario vea qué se procesó
 
     def mostrar_popup(self, mensaje, exito):
         mbox = QMessageBox(self)
