@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 import sys
+from styles.styles import Styles
 
 class BuscarClientes(QWidget):
     def __init__(self, controller, regresar_callback=None):
@@ -11,7 +12,7 @@ class BuscarClientes(QWidget):
         self.controller = controller
         self.regresar_callback = regresar_callback
         self.setWindowTitle("Buscar clientes")
-        self.setStyleSheet("background-color: #4d5a62;")
+        self.setStyleSheet(Styles.global_stylesheet())
         self.setMinimumSize(500, 500)
         self.font = QFont("Poppins", 11)
         self.initUI()
