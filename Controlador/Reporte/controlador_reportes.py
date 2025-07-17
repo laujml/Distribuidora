@@ -1,5 +1,5 @@
-from modelo_reportes import ReportesModel
-from vista_reportes import ReportesView
+from Modelo.modelo_reportes import ReportesModel
+from Vista.Reporte.vista_reportes import ReportesView
 
 class ReportesController:
     def __init__(self):
