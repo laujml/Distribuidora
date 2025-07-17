@@ -6,7 +6,7 @@ from PyQt6.QtCore import Qt, QDate
 from PyQt6.QtGui import QFont
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from recursos.Styles import Styles
+from Recursos.Styles import Styles
 
 class ReportesView(QWidget):
     def __init__(self):
