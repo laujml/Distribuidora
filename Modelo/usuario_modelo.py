@@ -1,5 +1,5 @@
 # modelo/usuario_modelo.py
-from modelo.db_config import conectar
+from Modelo.db_config import conectar
 
 def obtener_usuarios():
     conn = conectar()
