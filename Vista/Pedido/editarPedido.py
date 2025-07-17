@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import (
     QTableWidgetItem
 )
 from PyQt6.QtCore import pyqtSignal
-from vista.crearPedido import CrearPedidos
+from Vista.Pedido.crearPedido import CrearPedidos
 
 class EditarPedido(CrearPedidos):
     pedido_seleccionado = pyqtSignal(int)  # Índice del pedido seleccionado
