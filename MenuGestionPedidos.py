@@ -4,10 +4,10 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import QSize, Qt, QTimer
 from PyQt6.QtGui import QIcon
-import ventanaPedido 
-from Styles import Styles 
-from main_clientes import MainClientes
-from main_proveedores import MainProveedores
+from Consolidado import ventanaPedido 
+from Recursos.Styles import Styles 
+from Consolidado.ventanaClientes import MainClientes
+from Consolidado.ventanaProveedores import MainProveedores
 
 class MenuGestionPedidos(QWidget):
     def __init__(self):
