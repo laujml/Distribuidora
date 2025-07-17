@@ -4,11 +4,11 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont, QIcon
 import sys
-from views_clientes.agregar_clientes import AgregarClientes
-from views_clientes.buscar_clientes import BuscarClientes
-from views_clientes.actualizar_clientes import ActualizarClientes
-from views_clientes.eliminar_clientes import EliminarClientes
-from controller_clientes.cliente_controller import ClienteController
+from Vista.Cliente.agregar_clientes import AgregarClientes
+from Vista.Cliente.buscar_clientes import BuscarClientes
+from Vista.Cliente.actualizar_clientes import ActualizarClientes
+from Vista.Cliente.eliminar_clientes import EliminarClientes
+from Controlador.Cliente.cliente_controller import ClienteController
 
 class MenuPrincipal(QWidget):
     def __init__(self, cambiar_vista):
