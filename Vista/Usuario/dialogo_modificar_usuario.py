@@ -1,6 +1,6 @@
 # vista/dialogo_modificar_usuario.py
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLineEdit, QPushButton, QMessageBox
-from controlador.usuario_controlador import cambiar_contrasena
+from Controlador.Usuario.usuario_controlador import cambiar_contrasena
 
 class ModificarUsuarioDialog(QDialog):
     def __init__(self):
