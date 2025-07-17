@@ -1,5 +1,5 @@
-from Modelo.modeloPedido import Modelo
-from Vista.verPedidos import VerPedidos
+from modelo.modeloPedido import Modelo
+from vista.verPedidos import VerPedidos
 
 class VerPedidosControlador:
     def __init__(self):
