@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QMessageBox
-from Modelo.modeloPedido import Modelo
-from Vista.editarPedido import EditarPedido
-from Controlador.controladorCrearPedido import ControladorCrearPedidos
+from modelo.modeloPedido import Modelo
+from vista.editarPedido import EditarPedido
+from controlador.controladorCrearPedido import ControladorCrearPedidos
 
 class ControladorEditarPedidos(ControladorCrearPedidos):
     def __init__(self):
@@ -19,7 +19,6 @@ class ControladorEditarPedidos(ControladorCrearPedidos):
         self.vista.eliminar_fila_signal.connect(self.eliminar_fila)
         self.vista.cambiar_cantidad_signal.connect(self.cambiar_cantidad_fila)
         self.vista.resetear_pedido_signal.connect(self.resetear_pedido)
-
 
         self.cargar_productos()
         self.cargar_clientes()
