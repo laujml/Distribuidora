@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
+from styles.styles import Styles
 
 class AgregarProveedores(QWidget):
     def __init__(self, controller, regresar_callback=None):
@@ -10,7 +11,7 @@ class AgregarProveedores(QWidget):
         self.controller = controller
         self.regresar_callback = regresar_callback
         self.setWindowTitle("Agregar proveedores")
-        self.setStyleSheet("background-color: #4d5a62;")
+        self.setStyleSheet(Styles.global_stylesheet())
         self.setMinimumSize(500, 500)
         self.font = QFont("Poppins", 11)
         self.initUI()
@@ -126,7 +127,6 @@ class AgregarProveedores(QWidget):
         direccion = self.campos["Direccion"].text().strip()
         ok, msg = self.controller.agregar_proveedor(id_proveedor, proveedor, p_contacto, correo, telefono, direccion)
         self.mostrar_popup(msg, ok)
-        # Los campos se mantienen después de guardar para que el usuario vea qué se procesó
 
     def mostrar_popup(self, mensaje, exito):
         mbox = QMessageBox(self)
