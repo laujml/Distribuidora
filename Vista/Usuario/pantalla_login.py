@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtGui import QPixmap, QFont, QPainter, QPainterPath
 from PyQt6.QtCore import Qt
-from controlador.login_controlador import LoginControlador
+from Controlador.Usuario.login_controlador import LoginControlador
 import os
 
 class PantallaLogin(QWidget):
