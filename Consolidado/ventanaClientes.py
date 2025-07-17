@@ -4,17 +4,17 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont, QIcon
 import sys
-from Vista.Cliente.agregar_clientes import AgregarClientes
-from Vista.Cliente.buscar_clientes import BuscarClientes
-from Vista.Cliente.actualizar_clientes import ActualizarClientes
-from Vista.Cliente.eliminar_clientes import EliminarClientes
-from Controlador.Cliente.cliente_controller import ClienteController
+from views_clientes.agregar_clientes import AgregarClientes
+from views_clientes.buscar_clientes import BuscarClientes
+from views_clientes.actualizar_clientes import ActualizarClientes
+from views_clientes.eliminar_clientes import EliminarClientes
+from controller_clientes.cliente_controller import ClienteController
+from styles.styles import Styles
 
 class MenuPrincipal(QWidget):
     def __init__(self, cambiar_vista):
         super().__init__()
         self.cambiar_vista = cambiar_vista
-        self.setStyleSheet("background-color: #4d5a62;")
         self.font = QFont("Poppins", 14)
         self.initUI()
 
@@ -100,7 +100,6 @@ class MainClientes(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Clientes")
-        self.setStyleSheet("background-color: #4d5a62;")
         self.setMinimumSize(900, 600)
         self.stacked = QStackedWidget()
         layout = QVBoxLayout()
@@ -131,6 +130,7 @@ class MainClientes(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setStyleSheet(Styles.global_stylesheet())
     ventana = MainClientes()
     ventana.show()
     sys.exit(app.exec()) 
