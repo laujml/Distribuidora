@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QMessageBox, QInputDialog
-from Modelo.modeloPedido import Modelo
-from Vista.crearPedido import CrearPedidos
+from modelo.modeloPedido import Modelo
+from vista.crearPedido import CrearPedidos
 
 class ControladorCrearPedidos:
     def __init__(self):
@@ -20,6 +20,7 @@ class ControladorCrearPedidos:
         # Inicializar datos
         self.cargar_productos()
         self.cargar_clientes()
+        self.cargar_estados()
 
     def cargar_productos(self):
         productos = self.modelo.obtener_productos()
@@ -37,6 +38,10 @@ class ControladorCrearPedidos:
         clientes = self.modelo.obtener_clientes()
         self.vista.autocompletado_clientes(clientes)
 
+    def cargar_estados(self):
+        estados = self.modelo.obtener_estado()  # [(1, 'Pendiente'), (2, 'Pagado'), ...]
+        self.vista.cargar_estados(estados)
+    
     def agregar_producto(self, texto_producto, cantidad):
         if not texto_producto:
             QMessageBox.warning(self.vista, "Advertencia",
@@ -166,3 +171,4 @@ class ControladorCrearPedidos:
 
     def get_vista(self):
         return self.vista
+
