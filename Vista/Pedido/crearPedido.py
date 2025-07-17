@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import (
     QSpinBox, QPushButton, QLineEdit, QCompleter, QDoubleSpinBox, QComboBox
 )
 from PyQt6.QtCore import Qt, pyqtSignal
-from vista.tablaPedidos import TablaPedido
+from Vista.Pedido.tablaPedidos import TablaPedido
 
 class CrearPedidos(QWidget):
     # Señales para comunicarse con el controlador
