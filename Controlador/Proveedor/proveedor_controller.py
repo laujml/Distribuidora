@@ -1,4 +1,4 @@
-from model_proveedores.proveedor_model import ProveedorModel
+from Modelo.proveedor_model import ProveedorModel
 
 class ProveedorController:
     def __init__(self):
