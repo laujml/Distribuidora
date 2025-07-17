@@ -1,6 +1,6 @@
 # vista/dialogo_eliminar_usuario.py
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLineEdit, QPushButton, QMessageBox
-from controlador.usuario_controlador import eliminar_usuario_existente
+from Controlador.Usuario.usuario_controlador import eliminar_usuario_existente
 
 class EliminarUsuarioDialog(QDialog):
     def __init__(self):
