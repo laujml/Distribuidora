@@ -1,16 +1,16 @@
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QTableWidgetItem, QHBoxLayout, QLabel,
-    QSpinBox, QPushButton, QLineEdit, QCompleter, QDoubleSpinBox
+    QSpinBox, QPushButton, QLineEdit, QCompleter, QDoubleSpinBox, QComboBox
 )
 from PyQt6.QtCore import Qt, pyqtSignal
-from Vista.tablaPedidos import TablaPedido
+from vista.tablaPedidos import TablaPedido
 
 class CrearPedidos(QWidget):
     # Señales para comunicarse con el controlador
     agregar_producto_signal = pyqtSignal(str, int)  # producto, cantidad
     eliminar_fila_signal = pyqtSignal(int)  # fila
     cambiar_cantidad_signal = pyqtSignal(int, int)  # fila, nueva_cantidad
-    guardar_pedido_signal = pyqtSignal(str, str, float, int)  # cliente, estado, pendiente, plazo
+    guardar_pedido_signal = pyqtSignal(str, int, float, int)  # cliente, estado, pendiente, plazo
     resetear_pedido_signal = pyqtSignal()
     
     def __init__(self):
@@ -87,7 +87,7 @@ class CrearPedidos(QWidget):
         # Labels para el estado del pedido
         layout_estado = QHBoxLayout()
         self.label_estado = QLabel("Estado: ")
-        self.line_estado = QLineEdit()
+        self.combo_estado = QComboBox()
         self.label_pendiente_pago = QLabel("Pendiente de pagar: ")
         self.spin_pendiente = QDoubleSpinBox()
         self.spin_pendiente.setMinimum(0.00)
@@ -96,7 +96,7 @@ class CrearPedidos(QWidget):
         self.spin_plazo.setMinimum(0)
         
         layout_estado.addWidget(self.label_estado)
-        layout_estado.addWidget(self.line_estado)
+        layout_estado.addWidget(self.combo_estado)
         layout_estado.addWidget(self.label_pendiente_pago)
         layout_estado.addWidget(self.spin_pendiente)
         layout_estado.addWidget(self.label_plazo_dias)
@@ -122,6 +122,11 @@ class CrearPedidos(QWidget):
         cantidad = self.spin_cantidad.value()
         self.agregar_producto_signal.emit(texto_producto, cantidad)
     
+    def cargar_estados(self, lista_estados):
+        self.combo_estado.clear()
+        for id_estado, nombre_estado in lista_estados:
+            self.combo_estado.addItem(nombre_estado, id_estado)
+
     def eliminar_fila(self):
         fila = self.tabla.currentRow()
         if fila != -1:
@@ -132,10 +137,10 @@ class CrearPedidos(QWidget):
         if fila != -1:
             cantidad_actual = int(self.tabla.item(fila, 3).text())
             self.cambiar_cantidad_signal.emit(fila, cantidad_actual)
-    
+
     def guardar_pedido(self):
         cliente = self.line_cliente.text()
-        estado = self.line_estado.text()
+        estado = self.combo_estado.currentData()
         pendiente = self.spin_pendiente.value()
         plazo = self.spin_plazo.value()
         self.guardar_pedido_signal.emit(cliente, estado, pendiente, plazo)
@@ -172,7 +177,7 @@ class CrearPedidos(QWidget):
     def limpiar(self):
         self.tabla.limpiar()
         self.label_total.setText("Total: $0.00")
-        self.line_estado.clear()
+        self.combo_estado.setCurrentIndex(0)
         self.line_cliente.clear()
         self.line_producto.clear()
         self.spin_cantidad.setValue(1)
