@@ -4,17 +4,17 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont, QIcon
 import sys
-from Vista.Proveedor.agregar_proveedores import AgregarProveedores
-from Vista.Proveedor.buscar_proveedores import BuscarProveedores
-from Vista.Proveedor.actualizar_proveedores import ActualizarProveedores
-from Vista.Proveedor.eliminar_proveedores import EliminarProveedores
-from Controlador.Proveedor.proveedor_controller import ProveedorController
+from views_proveedores.agregar_proveedores import AgregarProveedores
+from views_proveedores.buscar_proveedores import BuscarProveedores
+from views_proveedores.actualizar_proveedores import ActualizarProveedores
+from views_proveedores.eliminar_proveedores import EliminarProveedores
+from controller_proveedores.proveedor_controller import ProveedorController
+from styles.styles import Styles
 
 class MenuPrincipal(QWidget):
     def __init__(self, cambiar_vista):
         super().__init__()
         self.cambiar_vista = cambiar_vista
-        self.setStyleSheet("background-color: #4d5a62;")
         self.font = QFont("Poppins", 14)
         self.initUI()
 
@@ -100,7 +100,6 @@ class MainProveedores(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Proveedores")
-        self.setStyleSheet("background-color: #4d5a62;")
         self.setMinimumSize(900, 600)
         self.stacked = QStackedWidget()
         layout = QVBoxLayout()
@@ -131,6 +130,7 @@ class MainProveedores(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setStyleSheet(Styles.global_stylesheet())
     ventana = MainProveedores()
     ventana.show()
     sys.exit(app.exec()) 
