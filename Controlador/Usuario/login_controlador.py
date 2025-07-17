@@ -1,7 +1,7 @@
-from modelo.usuario_modelo import validar_credenciales
+from Modelo.usuario_modelo import validar_credenciales
 from PyQt6.QtWidgets import QMessageBox
-from vista.pantalla_dashboard import PantallaDashboard
-from vista.pantalla_administrador import PantallaAdministrador
+from Vista.Dashboard.pantalla_dashboard import PantallaDashboard
+from Vista.Usuario.pantalla_administrador import PantallaAdministrador
 from MenuGestionPedidos import MenuGestionPedidos
 
 class LoginControlador:
