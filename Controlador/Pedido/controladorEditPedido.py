@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QMessageBox
-from modelo.modeloPedido import Modelo
-from vista.editarPedido import EditarPedido
-from controlador.controladorCrearPedido import ControladorCrearPedidos
+from Modelo.modeloPedido import Modelo
+from Vista.Pedido.editarPedido import EditarPedido
+from Controlador.Pedido.controladorCrearPedido import ControladorCrearPedidos
 
 class ControladorEditarPedidos(ControladorCrearPedidos):
     def __init__(self):
