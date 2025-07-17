@@ -5,8 +5,8 @@ def obtener_ingresos_dia(dia):
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT SUM(total) FROM Pedido
-        WHERE DATE(fecha_hora) = %s AND estado LIKE 'Pagado'
+        SELECT SUM(total) FROM Pedido, Estado e
+        WHERE DATE(fecha_hora) = %s AND e.estado = "Pagado"
     """, (dia,))
     resultado = cursor.fetchone()[0]
     conn.close()
