@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QApplication, QStackedWidget
-from vista.pantalla_bienvenida import PantallaBienvenida
-from vista.pantalla_login import PantallaLogin
-from recursos.Styles import Styles
+from Vista.Usuario.pantalla_bienvenida import PantallaBienvenida
+from Vista.Usuario.pantalla_login import PantallaLogin
+from Recursos.Styles import Styles
 
 class MainApp(QStackedWidget):
     def __init__(self):
