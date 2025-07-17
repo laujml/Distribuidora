@@ -20,10 +20,14 @@ class Modelo:
         resultados = self.cursor.fetchall()
         return [f"{id} - {nombre}" for id, nombre in resultados] #fetchall es para recoger los datos que la consulta hizo
 
+    def obtener_estado(self):
+        self.cursor.execute("SELECT id_estado, estado FROM Estado e;")
+        return self.cursor.fetchall()
+    
     def crear_pedido(self, id_cliente, total, estado, pendiente_pagar, plazo_dias):
         fecha_actual = datetime.now()
         self.cursor.execute("""
-            INSERT INTO Pedido (ID_Cliente, fecha_hora, total, estado, pendiente_pagar, plazo_dias)
+            INSERT INTO Pedido (ID_Cliente, fecha_hora, total, id_estado, pendiente_pagar, plazo_dias)
             VALUES (%s, %s, %s, %s, %s, %s)
         """, (id_cliente, fecha_actual, total, estado, pendiente_pagar, plazo_dias))
         self.conexion.commit() #.commit() se usa para guardar permanentemente los cambios realizados en una base de datos
@@ -45,6 +49,7 @@ class Modelo:
         for i, detalle in enumerate(detalles, start = 1):
             id_producto, cantidad, subtotal = detalle #desempaqueta la lista de tuplas ("detalles", que en la vista esta como productos_selecionados), Cada valor dentro de detalle se asigna a la variable correspondiente en orden.
             self.agregar_detalle(id_pedido, i, id_producto, cantidad, subtotal) 
+    
     def obtener_stock_producto(self, id_producto):
         self.cursor.execute("SELECT stockActual FROM Productos WHERE ID_Productos = %s", (id_producto,))
         resultado = self.cursor.fetchone()
@@ -54,14 +59,15 @@ class Modelo:
     def obtener_datos_pedido(self):
         cursor_dict = self.conexion.cursor(dictionary=True)
         consulta = """
-        SELECT p.fecha_hora, p.ID_Pedido, p.ID_Cliente, c.Nombre, c.Telefono, 
-               ps.ID_Productos, ps.descripcion, ps.precio, dp.cantidad_pares, dp.subtotal, 
-               p.total, p.estado, p.pendiente_pagar, p.plazo_dias
-        FROM Pedido p
-        INNER JOIN Cliente c ON p.ID_Cliente = c.ID_Cliente
-        INNER JOIN detalle_pedido dp ON p.ID_Pedido = dp.ID_Pedido
-        INNER JOIN Productos ps ON dp.ID_Productos = ps.ID_Productos
-        ORDER BY p.fecha_hora desc;
+            SELECT p.fecha_hora, p.ID_Pedido, p.ID_Cliente, c.Nombre, c.Telefono, 
+                ps.ID_Productos, ps.descripcion, ps.precio, dp.cantidad_pares, dp.subtotal, 
+                p.total, e.estado AS estado_nombre, p.pendiente_pagar, p.plazo_dias
+            FROM Pedido p
+            INNER JOIN Cliente c ON p.ID_Cliente = c.ID_Cliente
+            INNER JOIN detalle_pedido dp ON p.ID_Pedido = dp.ID_Pedido
+            INNER JOIN Productos ps ON dp.ID_Productos = ps.ID_Productos
+            INNER JOIN Estado e ON p.id_estado = e.id_estado
+            ORDER BY p.fecha_hora desc
         """
         cursor_dict.execute(consulta)
         filas = cursor_dict.fetchall()
@@ -77,7 +83,7 @@ class Modelo:
                     "nombre": fila["Nombre"],
                     "telefono": fila["Telefono"],
                     "total": fila["total"],
-                    "estado": fila["estado"],
+                    "estado": fila["estado_nombre"],
                     "pendiente_pagar": fila["pendiente_pagar"],
                     "plazo_dias": fila["plazo_dias"],
                     "productos": []
