@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import (
     QTableWidgetItem
 )
 from PyQt6.QtCore import pyqtSignal
-from Vista.crearPedido import CrearPedidos
+from vista.crearPedido import CrearPedidos
 
 class EditarPedido(CrearPedidos):
     pedido_seleccionado = pyqtSignal(int)  # Índice del pedido seleccionado
@@ -55,7 +55,10 @@ class EditarPedido(CrearPedidos):
         self.resetear_pedido()
 
         self.line_cliente.setText(f"{pedido['cliente_id']} - {pedido['nombre']}")
-        self.line_estado.setText(pedido['estado'])
+        for i in range(self.combo_estado.count()):
+            if self.combo_estado.itemData(i) == pedido["estado_id"]:
+                self.combo_estado.setCurrentIndex(i)
+                break
         self.spin_pendiente.setValue(pedido['pendiente_pagar'])
         self.spin_plazo.setValue(pedido['plazo_dias'])
 
@@ -94,7 +97,7 @@ class EditarPedido(CrearPedidos):
 
         return {
             'texto_cliente': self.line_cliente.text(),
-            'estado': self.line_estado.text(),
+            'estado': self.combo_estado.currentData(),
             'pendiente': self.spin_pendiente.value(),
             'plazo': self.spin_plazo.value(),
             'total': sum([item[2] for item in detalles]),
@@ -109,3 +112,4 @@ class EditarPedido(CrearPedidos):
 
     def get_productos_seleccionados(self):
         return self.productos_seleccionados
+
