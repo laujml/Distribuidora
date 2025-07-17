@@ -9,12 +9,12 @@ from views_proveedores.buscar_proveedores import BuscarProveedores
 from views_proveedores.actualizar_proveedores import ActualizarProveedores
 from views_proveedores.eliminar_proveedores import EliminarProveedores
 from controller_proveedores.proveedor_controller import ProveedorController
+from styles.styles import Styles
 
 class MenuPrincipal(QWidget):
     def __init__(self, cambiar_vista):
         super().__init__()
         self.cambiar_vista = cambiar_vista
-        self.setStyleSheet("background-color: #4d5a62;")
         self.font = QFont("Poppins", 14)
         self.initUI()
 
@@ -100,7 +100,6 @@ class MainProveedores(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Proveedores")
-        self.setStyleSheet("background-color: #4d5a62;")
         self.setMinimumSize(900, 600)
         self.stacked = QStackedWidget()
         layout = QVBoxLayout()
@@ -128,6 +127,13 @@ class MainProveedores(QWidget):
             self.stacked.setCurrentWidget(self.menu)
         else:
             self.stacked.setCurrentWidget(self.ventanas[vista])
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    app.setStyleSheet(Styles.global_stylesheet())
+    ventana = MainProveedores()
+    ventana.show()
+    sys.exit(app.exec()) 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
