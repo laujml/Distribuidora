@@ -146,7 +146,6 @@ class EliminarProveedores(QWidget):
         if confirm == QMessageBox.StandardButton.Yes:
             ok, msg = self.controller.eliminar_proveedor(id_proveedor)
             self.mostrar_popup(msg, ok)
-            # Los campos se mantienen después de eliminar para que el usuario vea qué se procesó
 
     def mostrar_popup(self, mensaje, exito):
         mbox = QMessageBox(self)
