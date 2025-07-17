@@ -32,7 +32,6 @@ def agregar_usuario(usuario, clave, rol):
     conn.commit()
     conn.close()
 
-
 def modificar_usuario(usuario, nueva_clave):
     conn = conectar()
     cursor = conn.cursor()
@@ -43,15 +42,12 @@ def modificar_usuario(usuario, nueva_clave):
     conn.commit()
     conn.close()
 
-
-
 def eliminar_usuario(usuario):
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute("DELETE FROM Usuario WHERE nombreUsuario=%s", (usuario,))
     conn.commit()
     conn.close()
-
 
 def validar_credenciales(usuario, clave):
     conn = conectar()
@@ -63,3 +59,4 @@ def validar_credenciales(usuario, clave):
     if usuario_encontrado:
         return True, usuario_encontrado  
     return False, None
+
