@@ -1,4 +1,4 @@
-from Modelo.Cliente.cliente_model import ClienteModel
+from Modelo.cliente_model import ClienteModel
 
 class ClienteController:
     def __init__(self):
