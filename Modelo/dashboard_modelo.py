@@ -1,5 +1,5 @@
 # modelo/dashboard_modelo.py
-from modelo.db_config import conectar
+from Modelo.db_config import conectar
 
 def obtener_ingresos_dia(dia):
     conn = conectar()
