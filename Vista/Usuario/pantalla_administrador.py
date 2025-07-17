@@ -1,8 +1,8 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QMessageBox
 from PyQt6.QtCore import Qt
-from vista.dialogo_crear_usuario import CrearUsuarioDialog
-from vista.dialogo_modificar_usuario import ModificarUsuarioDialog
-from vista.dialogo_eliminar_usuario import EliminarUsuarioDialog
+from Vista.Usuario.dialogo_crear_usuario import CrearUsuarioDialog
+from Vista.Usuario.dialogo_modificar_usuario import ModificarUsuarioDialog
+from Vista.Usuario.dialogo_eliminar_usuario import EliminarUsuarioDialog
 
 class PantallaAdministrador(QWidget):
     def __init__(self, stack):
