@@ -1,6 +1,6 @@
 # vista/dialogo_crear_usuario.py
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton, QComboBox, QMessageBox
-from controlador.usuario_controlador import registrar_nuevo_usuario
+from Controlador.Usuario.usuario_controlador import registrar_nuevo_usuario
 
 class CrearUsuarioDialog(QDialog):
     def __init__(self):
