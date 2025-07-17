@@ -1,5 +1,5 @@
 # controlador/dashboard_controlador.py
-from modelo.dashboard_modelo import (
+from Modelo.dashboard_modelo import (
     obtener_ingresos_dia,
     obtener_estado_inventario
 )
