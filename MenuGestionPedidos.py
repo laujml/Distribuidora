@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
-    QListWidget, QListWidgetItem, QStackedWidget
+    QListWidget, QListWidgetItem, QStackedWidget, QMessageBox
 )
 from PyQt6.QtCore import QSize, Qt, QTimer
 from PyQt6.QtGui import QIcon
@@ -8,6 +8,8 @@ from Consolidado import ventanaPedido
 from Recursos.Styles import Styles 
 from Consolidado.ventanaClientes import MainClientes
 from Consolidado.ventanaProveedores import MainProveedores
+from Vista.Dashboard.pantalla_dashboard import PantallaDashboard
+from Consolidado.ventanaPedido import VentanaPedidos
 
 class MenuGestionPedidos(QWidget):
     def __init__(self):
