@@ -65,9 +65,7 @@ class PantallaSeleccion(QWidget):
             print(f"Navigating to {opcion} screen (implement navigation logic)")
 
     def go_to_weekly(self):
-        """
-        Emit the signal to show the weekly report and navigate to the reports view.
-        """
+        
         self.ir_a_semanal.emit()
         self.stack.setCurrentIndex(1) 
 
