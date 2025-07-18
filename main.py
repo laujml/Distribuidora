@@ -3,7 +3,6 @@ from PyQt6.QtCore import Qt
 from Vista.Usuario.pantalla_bienvenida import PantallaBienvenida
 from Vista.Usuario.pantalla_login import PantallaLogin
 from Recursos.Styles import Styles
-from Recursos.structure import UIConfig
 from MenuGestionPedidos import MenuGestionPedidos
 
 class MainApp(QStackedWidget):
