@@ -1,18 +1,19 @@
 import mysql.connector
 from datetime import datetime, timedelta
 import pandas as pd
+import os  
 from db_config import conectar
 
 class ReportesModel:
     def __init__(self):
-        
+       
         try:
             self.conn = conectar()
         except Exception as e:
             raise e
 
     def get_clientes(self):
-       
+        
         try:
             cursor = self.conn.cursor()
             cursor.execute("SELECT ID_Cliente, Nombre FROM Cliente")
@@ -23,7 +24,7 @@ class ReportesModel:
             raise Exception(f"Error al obtener clientes: {e}")
 
     def get_productos(self):
-        
+       
         try:
             cursor = self.conn.cursor()
             cursor.execute("SELECT ID_Productos, descripcion FROM Productos")
@@ -34,7 +35,7 @@ class ReportesModel:
             raise Exception(f"Error al obtener productos: {e}")
 
     def get_total_ventas(self, start_date, end_date, cliente_id=None):
-       
+    
         try:
             cursor = self.conn.cursor()
             query = """
@@ -54,7 +55,7 @@ class ReportesModel:
             raise Exception(f"Error al obtener total de ventas: {e}")
 
     def get_top_cliente(self, start_date, end_date):
-       
+        
         try:
             cursor = self.conn.cursor()
             query = """
@@ -74,7 +75,7 @@ class ReportesModel:
             raise Exception(f"Error al obtener cliente top: {e}")
 
     def get_productos_vendidos(self, start_date, end_date, producto_id=None):
-        
+       
         try:
             cursor = self.conn.cursor()
             query = """
@@ -117,7 +118,7 @@ class ReportesModel:
             raise Exception(f"Error al obtener detalle de ventas: {e}")
 
     def get_ventas_por_fecha(self, start_date, end_date):
-        
+       
         try:
             cursor = self.conn.cursor()
             query = """
@@ -153,9 +154,11 @@ class ReportesModel:
         except mysql.connector.Error as e:
             raise Exception(f"Error al obtener top clientes: {e}")
 
-    def export_to_excel(self, start_date, end_date, filepath="reporte_ventas.xlsx"):
-        
+    def export_to_excel(self, start_date, end_date, filepath=None):
+       
         try:
+            if filepath is None:
+                filepath = os.path.join(os.path.expanduser("~"), "reporte_ventas.xlsx")
             cursor = self.conn.cursor()
             query = """
                 SELECT p.fecha_hora, c.Nombre, pr.descripcion, dp.cantidad_pares, dp.subtotal
@@ -177,7 +180,7 @@ class ReportesModel:
             raise Exception(f"Error al exportar a Excel: {e}")
 
     def close(self):
-       
+        
         if self.conn.is_connected():
             self.conn.close()
 
