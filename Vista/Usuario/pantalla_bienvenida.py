@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QSizePoli
 from PyQt6.QtGui import QPixmap, QFont, QPainter, QPainterPath
 from PyQt6.QtCore import Qt, QSize
 import os
+import sys
 
 class PantallaBienvenida(QWidget):
     def __init__(self, stack):
@@ -15,7 +16,9 @@ class PantallaBienvenida(QWidget):
         
         # Logo
         logo_label = QLabel(self)
-        logo_path = os.path.join(os.path.dirname(__file__), "../recursos/logo.jpg")
+        logo_path = "Recursos/logo.jpg"
+        pixmap = QPixmap(logo_path)
+        
         if os.path.exists(logo_path):
             pixmap = QPixmap(logo_path).scaled(240, 240, Qt.AspectRatioMode.KeepAspectRatioByExpanding, Qt.TransformationMode.SmoothTransformation)
             rounded_pixmap = self.redondear_pixmap(pixmap, 240)
@@ -29,9 +32,7 @@ class PantallaBienvenida(QWidget):
         
         # Título
         label = QLabel("¡Bienvenido!", self)
-        label.setFont(QFont("Arial", 20, QFont.Weight.Bold))
-        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        label.setStyleSheet("color: white;")
+        label.setObjectName("titulo")
         
         # Botón
         boton = QPushButton("Iniciar sesión", self)
