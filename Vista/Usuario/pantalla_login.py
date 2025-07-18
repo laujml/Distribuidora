@@ -6,6 +6,7 @@ from PyQt6.QtGui import QPixmap, QFont, QPainter, QPainterPath
 from PyQt6.QtCore import Qt
 from Controlador.Usuario.login_controlador import LoginControlador
 import os
+import sys
 
 class PantallaLogin(QWidget):
     def __init__(self, stack):
@@ -39,7 +40,9 @@ class PantallaLogin(QWidget):
         self.logo = QLabel()
         self.logo.setFixedSize(100, 100)
         self.logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        logo_path = os.path.join(os.path.dirname(__file__), "../recursos/logo.jpg")
+        logo_path = "Recursos/logo.jpg"
+        pixmap = QPixmap(logo_path)
+        
         if os.path.exists(logo_path):
             pixmap = QPixmap(logo_path)
             rounded_pixmap = self.redondear_pixmap(pixmap, 100)
@@ -55,9 +58,7 @@ class PantallaLogin(QWidget):
         
         # Título
         self.lbl_titulo = QLabel("Inicio de sesión")
-        self.lbl_titulo.setFont(QFont("Arial", 18, QFont.Weight.Bold))
-        self.lbl_titulo.setStyleSheet("color: white;")
-        self.lbl_titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lbl_titulo.setObjectName("titulo")
         layout_form.addWidget(self.lbl_titulo)
         
         # Campos de entrada
