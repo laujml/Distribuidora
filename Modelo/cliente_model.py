@@ -1,14 +1,8 @@
-import mysql.connector
-from mysql.connector import Error
+from Modelo.db_config import conectar
 
 class ClienteModel:
     def __init__(self):
-        self.conn = mysql.connector.connect(
-            host='localhost',
-            database='distribuidora',
-            user='root',
-            password='1234'
-        )
+        self.conn = conectar()
         self.cursor = self.conn.cursor(dictionary=True)
 
     def agregar_cliente(self, id_cliente, nombre, correo, telefono, direccion):
