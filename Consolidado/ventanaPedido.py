@@ -19,7 +19,7 @@ class VentanaPedidos(QWidget):
         layout_menu = QVBoxLayout()
         
         self.titulo = QLabel("Pedidos")
-        self.titulo.setObjectName("primerLabel") 
+        self.titulo.setObjectName("titulo")
         self.titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
         btn_crear = QPushButton("Crear Pedido")
