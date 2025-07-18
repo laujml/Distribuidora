@@ -22,6 +22,7 @@ class MenuPrincipal(QWidget):
         # Título principal
         titulo = QLabel("Clientes")
         titulo.setObjectName("titulo")
+        titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(titulo)
 
         btn_agregar = QPushButton()
