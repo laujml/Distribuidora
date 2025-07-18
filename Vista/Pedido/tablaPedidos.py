@@ -27,3 +27,4 @@ class TablaPedido(QTableWidget):
             subtotal = self.item(fila, 4).text().replace("$", "")
             datos.append((codigo, producto, float(precio), int(cantidad), float(subtotal)))
         return datos
+
