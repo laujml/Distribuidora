@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 import sys
-from styles.styles import Styles
+from Recursos.Styles import Styles
 
 class ActualizarClientes(QWidget):
     def __init__(self, controller, regresar_callback=None):
