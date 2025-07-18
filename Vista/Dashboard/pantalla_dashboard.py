@@ -27,7 +27,7 @@ class PantallaDashboard(QWidget):
     def crear_dashboard(self):
         titulo = QLabel("¡Bienvenido!")
         titulo.setObjectName("titulo")
-        titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        #titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.layout_dashboard.addWidget(titulo)
 
         #INGRESOS
@@ -95,3 +95,4 @@ class PantallaDashboard(QWidget):
         for descripcion, stock in datos['inventario']:
             texto += f"{descripcion}: {stock}<br>"
         self.lbl_inventario.setText(texto)
+
