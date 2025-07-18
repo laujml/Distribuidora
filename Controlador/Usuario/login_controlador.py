@@ -1,8 +1,6 @@
 from Modelo.usuario_modelo import validar_credenciales
 from PyQt6.QtWidgets import QMessageBox
-from Vista.Dashboard.pantalla_dashboard import PantallaDashboard
 from Vista.Usuario.pantalla_administrador import PantallaAdministrador
-from MenuGestionPedidos import MenuGestionPedidos
 
 class LoginControlador:
     def __init__(self, vista_login, stack):
@@ -24,9 +22,7 @@ class LoginControlador:
                 self.stack.setCurrentIndex(admin_index)
 
             elif rol == "cliente":
-                menu = MenuGestionPedidos(stack=self.stack)
-                menu_index = self.stack.addWidget(menu)
-                self.stack.setCurrentIndex(menu_index)
+                self.stack.setCurrentIndex(2)  # Cambia al menú ya cargado
 
             else:
                 QMessageBox.warning(self.vista, "Error", f"Rol desconocido: {rol}")
@@ -35,3 +31,4 @@ class LoginControlador:
 
     def regresar(self):
         self.stack.setCurrentIndex(0)
+
