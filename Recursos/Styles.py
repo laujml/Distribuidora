@@ -1,5 +1,3 @@
-from PyQt6.QtWidgets import QWidget, QListWidget
-
 class Styles:
     PRIMARY_TEXT = "#4d5a62"
     BACKGROUND = "#4d5a62"
@@ -195,4 +193,3 @@ class Styles:
                 background-color: #d0d0d0;
             }}
         """
-
