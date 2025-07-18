@@ -4,103 +4,55 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont, QIcon
 import sys
-from views_proveedores.agregar_proveedores import AgregarProveedores
-from views_proveedores.buscar_proveedores import BuscarProveedores
-from views_proveedores.actualizar_proveedores import ActualizarProveedores
-from views_proveedores.eliminar_proveedores import EliminarProveedores
-from controller_proveedores.proveedor_controller import ProveedorController
-from styles.styles import Styles
+from Vista.Proveedor.agregar_proveedores import AgregarProveedores
+from Vista.Proveedor.buscar_proveedores import BuscarProveedores
+from Vista.Proveedor.actualizar_proveedores import ActualizarProveedores
+from Vista.Proveedor.eliminar_proveedores import EliminarProveedores
+from Controlador.Proveedor.proveedor_controller import ProveedorController
 
 class MenuPrincipal(QWidget):
     def __init__(self, cambiar_vista):
         super().__init__()
         self.cambiar_vista = cambiar_vista
-        self.font = QFont("Poppins", 14)
         self.initUI()
 
     def initUI(self):
         main_layout = QVBoxLayout()
-        main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.setLayout(main_layout)
 
         # Título principal
         titulo = QLabel("Proveedores")
-        titulo.setFont(QFont("Poppins", 38, QFont.Weight.Bold))
-        titulo.setStyleSheet("color: #fff; margin-bottom: 32px;")
-        titulo.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        titulo.setObjectName("titulo")
         main_layout.addWidget(titulo)
 
-        # Botones en grid 2x2
-        grid_layout = QHBoxLayout()
-        grid_layout.setSpacing(60)
-        col1 = QVBoxLayout()
-        col2 = QVBoxLayout()
-        col1.setSpacing(32)
-        col2.setSpacing(32)
-
-        estilo_boton = """
-            QToolButton {
-                background: #fff;
-                color: #222;
-                border-radius: 28px;
-                padding: 16px 32px;
-                font-size: 1.15rem;
-                font-family: 'Poppins', sans-serif;
-                font-weight: 500;
-                min-width: 260px;
-                min-height: 120px;
-            }
-        """
-
-        btn_agregar = QToolButton()
+        btn_agregar = QPushButton()
         btn_agregar.setText("Agregar proveedor")
         btn_agregar.setIcon(QIcon("recursos/Agregar cliente.jpg"))
-        btn_agregar.setIconSize(QSize(72, 72))
-        btn_agregar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
-        btn_agregar.setFont(QFont("Poppins", 20, QFont.Weight.Medium))
-        btn_agregar.setStyleSheet(estilo_boton)
         btn_agregar.clicked.connect(lambda: self.cambiar_vista('agregar'))
+        main_layout.addWidget(btn_agregar)
 
-        btn_actualizar = QToolButton()
+        btn_actualizar = QPushButton()
         btn_actualizar.setText("Actualizar datos")
         btn_actualizar.setIcon(QIcon("recursos/Actualizar datos.jpg"))
-        btn_actualizar.setIconSize(QSize(72, 72))
-        btn_actualizar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
-        btn_actualizar.setFont(QFont("Poppins", 20, QFont.Weight.Medium))
-        btn_actualizar.setStyleSheet(estilo_boton)
         btn_actualizar.clicked.connect(lambda: self.cambiar_vista('actualizar'))
+        main_layout.addWidget(btn_actualizar)
 
-        btn_eliminar = QToolButton()
+        btn_eliminar = QPushButton()
         btn_eliminar.setText("Eliminar proveedor")
         btn_eliminar.setIcon(QIcon("recursos/Eliminar cliente.jpg"))
-        btn_eliminar.setIconSize(QSize(72, 72))
-        btn_eliminar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
-        btn_eliminar.setFont(QFont("Poppins", 20, QFont.Weight.Medium))
-        btn_eliminar.setStyleSheet(estilo_boton)
         btn_eliminar.clicked.connect(lambda: self.cambiar_vista('eliminar'))
+        main_layout.addWidget(btn_eliminar)
 
-        btn_buscar = QToolButton()
+        btn_buscar = QPushButton()
         btn_buscar.setText("Buscar proveedor")
         btn_buscar.setIcon(QIcon("recursos/Buscar.jpg"))
-        btn_buscar.setIconSize(QSize(72, 72))
-        btn_buscar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
-        btn_buscar.setFont(QFont("Poppins", 20, QFont.Weight.Medium))
-        btn_buscar.setStyleSheet(estilo_boton)
         btn_buscar.clicked.connect(lambda: self.cambiar_vista('buscar'))
+        main_layout.addWidget(btn_buscar)
 
-        col1.addWidget(btn_agregar)
-        col1.addWidget(btn_eliminar)
-        col2.addWidget(btn_actualizar)
-        col2.addWidget(btn_buscar)
-        grid_layout.addLayout(col1)
-        grid_layout.addLayout(col2)
-        main_layout.addLayout(grid_layout)
+        self.setLayout(main_layout)
 
 class MainProveedores(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Proveedores")
-        self.setMinimumSize(900, 600)
         self.stacked = QStackedWidget()
         layout = QVBoxLayout()
         layout.addWidget(self.stacked)
@@ -130,7 +82,6 @@ class MainProveedores(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setStyleSheet(Styles.global_stylesheet())
     ventana = MainProveedores()
     ventana.show()
     sys.exit(app.exec()) 
