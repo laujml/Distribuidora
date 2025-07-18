@@ -1,14 +1,10 @@
 import mysql.connector
 from datetime import datetime
+from Modelo.db_config import conectar
 
 class Modelo:
     def __init__(self):
-        self.conexion = mysql.connector.connect(
-            host="localhost",
-            user="root",     
-            password="", 
-            database="Distribuidora"
-        )
+        self.conexion = conectar()
         self.cursor = self.conexion.cursor()
 
     def obtener_productos(self):
@@ -163,3 +159,4 @@ class Modelo:
     def cerrar_conexion(self):
         self.cursor.close()
         self.conexion.close()
+
