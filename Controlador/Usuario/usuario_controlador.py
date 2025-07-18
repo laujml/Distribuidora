@@ -32,3 +32,4 @@ def eliminar_usuario_existente(nombre):
         eliminar_usuario(nombre)
         return True
     return False
+
