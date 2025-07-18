@@ -112,4 +112,3 @@ class EditarPedido(CrearPedidos):
 
     def get_productos_seleccionados(self):
         return self.productos_seleccionados
-
