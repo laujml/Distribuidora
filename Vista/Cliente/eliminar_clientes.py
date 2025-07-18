@@ -151,5 +151,4 @@ class EliminarClientes(QWidget):
         mbox.setWindowTitle("Éxito" if exito else "Error")
         mbox.setText(mensaje)
         mbox.setIcon(QMessageBox.Icon.Information if exito else QMessageBox.Icon.Critical)
-        mbox.exec() Information if exito else QMessageBox.Icon.Critical)
         mbox.exec() 
