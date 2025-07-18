@@ -2,7 +2,7 @@ import mysql.connector
 from datetime import datetime, timedelta
 import pandas as pd
 import os  
-from db_config import conectar
+from Modelo.db_config import conectar
 
 class ReportesModel:
     def __init__(self):
@@ -35,12 +35,12 @@ class ReportesModel:
             raise Exception(f"Error al obtener productos: {e}")
 
     def get_total_ventas(self, start_date, end_date, cliente_id=None):
-    
         try:
             cursor = self.conn.cursor()
             query = """
-                SELECT SUM(p.total) as total_ventas, COUNT(p.ID_Pedido) as total_pedidos
-                FROM Pedido p
+                SELECT SUM(dp.subtotal) as total_ventas, COUNT(DISTINCT p.ID_Pedido) as total_pedidos
+                FROM detalle_pedido dp
+                JOIN Pedido p ON dp.ID_Pedido = p.ID_Pedido
                 WHERE p.fecha_hora BETWEEN %s AND %s
             """
             params = [start_date, end_date]
@@ -50,9 +50,12 @@ class ReportesModel:
             cursor.execute(query, params)
             result = cursor.fetchone()
             cursor.close()
-            return result[0] or 0, result[1] or 0
+            if result is None:
+                return 0.0, 0
+            return result[0] or 0.0, result[1] or 0
         except mysql.connector.Error as e:
             raise Exception(f"Error al obtener total de ventas: {e}")
+
 
     def get_top_cliente(self, start_date, end_date):
         
