@@ -234,10 +234,13 @@ class VerProductosTabla(QWidget):
         self.tabla.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         layout.addWidget(self.tabla)
 
-        # --- Botón Actualizar agregado aquí ---
         btn_actualizar = QPushButton("Actualizar")
         btn_actualizar.clicked.connect(self.cargar_datos)
         layout.addWidget(btn_actualizar)
+
+        btn_importar = QPushButton("Importar desde Excel")
+        btn_importar.clicked.connect(self.importar_excel)
+        layout.addWidget(btn_importar)
 
         btn_regresar = QPushButton("Regresar")
         btn_regresar.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(0))
@@ -265,6 +268,90 @@ class VerProductosTabla(QWidget):
             conn.close()
         except Exception as e:
             QMessageBox.critical(self, "Error", f"No se pudo cargar la tabla: {e}")
+
+    def importar_excel(self):
+        try:
+            from PyQt6.QtWidgets import QFileDialog
+            import pandas as pd
+
+            file_path, _ = QFileDialog.getOpenFileName(self, "Seleccionar archivo Excel", "", "Excel Files (*.xlsx *.xls)")
+            if not file_path:
+                return
+
+            df = pd.read_excel(file_path)
+
+            columnas_requeridas = [
+                "ID Producto", "Descripción", "Precio", "Talla",
+                "Color", "Stock", "Fecha de Ingreso", "ID Proveedor"
+            ]
+
+            columnas_normalizadas = [col.lower().strip() for col in df.columns]
+            requeridas_normalizadas = [c.lower() for c in columnas_requeridas]
+
+            if not all(col in columnas_normalizadas for col in requeridas_normalizadas):
+                QMessageBox.warning(
+                    self,
+                    "Error",
+                    f"El archivo debe contener las columnas: {', '.join(columnas_requeridas)}"
+                )
+                return
+
+            # Mapear nombres de columnas reales a esperados por la base de datos
+            mapeo = {
+                "ID Producto": "ID_Productos",
+                "Descripción": "descripcion",
+                "Precio": "precio",
+                "Talla": "talla",
+                "Color": "color",
+                "Stock": "stockActual",
+                "Fecha de Ingreso": "fecha_ingreso",
+                "ID Proveedor": "ID_Proveedor"
+            }
+
+            df = df.rename(columns={col: mapeo[col] for col in columnas_requeridas})
+
+            conn = self.conectar_db()
+            cursor = conn.cursor()
+
+            for _, fila in df.iterrows():
+                datos = (
+                    str(fila["ID_Productos"]),
+                    str(fila["descripcion"]),
+                    float(fila["precio"]),
+                    str(fila["talla"]),
+                    str(fila["color"]),
+                    int(fila["stockActual"]),
+                    str(fila["fecha_ingreso"]),
+                    str(fila["ID_Proveedor"])
+                )
+
+                cursor.execute("SELECT * FROM productos WHERE ID_Productos = %s", (datos[0],))
+                existe = cursor.fetchone()
+
+                if existe:
+                    cursor.execute(
+                        """UPDATE productos SET descripcion=%s, precio=%s, talla=%s, color=%s,
+                        stockActual=%s, fecha_ingreso=%s, ID_Proveedor=%s WHERE ID_Productos=%s""",
+                        datos[1:] + (datos[0],)
+                    )
+                else:
+                    cursor.execute(
+                        """INSERT INTO productos 
+                        (ID_Productos, descripcion, precio, talla, color, stockActual, fecha_ingreso, ID_Proveedor)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
+                        datos
+                    )
+
+            conn.commit()
+            cursor.close()
+            conn.close()
+
+            QMessageBox.information(self, "Importación completa", "Productos importados correctamente.")
+            self.cargar_datos()
+
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Error al importar: {e}")
+            
 
 
 class VentanaProductosPrincipal(QWidget):
