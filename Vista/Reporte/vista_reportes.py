@@ -38,7 +38,7 @@ class ReportesView(QWidget):
         """)
         main_layout.addWidget(self.titulo)
 
-        # Filtros
+        # Filtros horizontales
         filtros_layout = QHBoxLayout()
         filtros_layout.setSpacing(10)
 
@@ -46,10 +46,10 @@ class ReportesView(QWidget):
         self.period_cb.addItems(["Semanal", "Mensual"])
         self.fecha_inicio = QDateEdit()
         self.fecha_inicio.setCalendarPopup(True)
-        self.fecha_inicio.setDate(QDate.currentDate().addMonths(-1))
+        self.fecha_inicio.setDate(QDate.currentDate().addMonths(-1)) #por defecto ultimo mes
         self.fecha_fin = QDateEdit()
         self.fecha_fin.setCalendarPopup(True)
-        self.fecha_fin.setDate(QDate.currentDate())
+        self.fecha_fin.setDate(QDate.currentDate()) # fecha actual por defecto
         self.cliente_cb = QComboBox()
         self.cliente_cb.addItem("Todos los clientes")
         self.producto_cb = QComboBox()
@@ -72,7 +72,7 @@ class ReportesView(QWidget):
 
         self.buscar_btn = QPushButton("Buscar")
         self.limpiar_btn = QPushButton("Limpiar filtros")
-        
+        # Estilo con hover effect para los botones
         button_style = """
             QPushButton {
                 background-color: #40464b;
@@ -115,7 +115,7 @@ class ReportesView(QWidget):
         filtros_layout.addWidget(self.limpiar_btn)
         main_layout.addLayout(filtros_layout)
 
-        # Resumen
+        # Resumen de estadisticas
         resumen_layout = QHBoxLayout()
         resumen_layout.setSpacing(10)
 
@@ -200,7 +200,7 @@ class ReportesView(QWidget):
             }
         """)
 
-    # Métodos de utilidad (sin cambios)
+    # Métodos de utilidad para actualizar interfaz
     def set_periodo(self, periodo):
         self.period_cb.setCurrentText(periodo)
         self.titulo.setText(f"Reporte {periodo}")
@@ -235,39 +235,41 @@ class ReportesView(QWidget):
         self.tabla.resizeColumnsToContents()
 
     def update_graphs(self, sales_data, client_data, best_products, worst_products):
+        #Actualizr los graficos con datos nuevos
         for ax in self.axes.flat:
             ax.clear()
             ax.set_facecolor('#4d5a62')
             ax.tick_params(colors='#969fa3')
             for spine in ax.spines.values():
                 spine.set_color('#676d71')
-
+#ventas
         if sales_data:
             dates, totals = zip(*sales_data)
             self.axes[0, 0].plot(dates, totals, color='#969fa3')
         self.axes[0, 0].set_title("Ventas Totales", color='#969a9a')
         self.axes[0, 0].tick_params(axis='x', rotation=45)
-
+#mejores clientes
         if client_data:
             clients, client_totals = zip(*client_data)
             self.axes[0, 1].bar(clients, client_totals, color='#969a9a')
         self.axes[0, 1].set_title("Mejores Clientes", color='#969a9a')
         self.axes[0, 1].tick_params(axis='x', rotation=45)
-
+#mejores productos
         if best_products:
             products, quantities = zip(*best_products)
             self.axes[1, 0].barh(products, quantities, color='#969a9a')
         self.axes[1, 0].set_title("Productos Más Vendidos", color='#969a9a')
-
+#productos menos vendidos
         if worst_products:
             products, quantities = zip(*worst_products)
             self.axes[1, 1].barh(products, quantities, color='#969a9a')
         self.axes[1, 1].set_title("Productos Menos Vendidos", color='#969a9a')
 
         self.figure.tight_layout()
-        self.canvas.draw()
+        self.canvas.draw()#redibujar
 
     def reset_filters(self):
+        #reestablecer filtros
         self.fecha_inicio.setDate(QDate.currentDate().addMonths(-1))
         self.fecha_fin.setDate(QDate.currentDate())
         self.cliente_cb.setCurrentIndex(0)
@@ -284,9 +286,11 @@ class ReportesView(QWidget):
         }
 
     def set_start_date(self, start_date):
+        #establecer fecha de inicio
         self.fecha_inicio.setDate(QDate.fromString(start_date, "yyyy-MM-dd"))
 
     def show_error(self, message):
+        #mostrar mensaje de error en caso de haber
         QMessageBox.critical(self, "Error", message)
 
     def show_info(self, message):
