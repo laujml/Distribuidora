@@ -1,3 +1,4 @@
+# imports
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QSizePolicy, QMessageBox
 )
@@ -8,6 +9,7 @@ from Recursos.Styles import Styles
 class AgregarProveedores(QWidget):
     def __init__(self, controller, regresar_callback=None):
         super().__init__()
+        # init
         self.controller = controller
         self.regresar_callback = regresar_callback
         self.setWindowTitle("Agregar proveedores")
@@ -17,25 +19,30 @@ class AgregarProveedores(QWidget):
         self.initUI()
 
     def initUI(self):
+        # main layout
         main_layout = QVBoxLayout()
         main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setLayout(main_layout)
 
+        # titulo
         titulo_ventana = QLabel("Agregar proveedores")
         titulo_ventana.setFont(QFont("Poppins", 22, QFont.Weight.Bold))
         titulo_ventana.setStyleSheet("color: #fff; margin-top: 18px; margin-bottom: 18px;")
         titulo_ventana.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         main_layout.addWidget(titulo_ventana)
 
+        # form widget
         self.form_widget = QWidget()
         self.form_layout = QVBoxLayout()
         self.form_layout.setSpacing(10)
         self.form_widget.setLayout(self.form_layout)
         self.form_widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
+        # campos dict
         self.campos = {}
         input_height = 38
         border_radius_input = 19
+        # input style
         estilo_input = f"""
             QLineEdit {{
                 background: #fff;
@@ -46,6 +53,7 @@ class AgregarProveedores(QWidget):
                 font-family: 'Poppins', sans-serif;
             }}
         """
+        # crear campos
         labels = ["Identificación", "Proveedor", "Contacto", "Correo", "Telefono", "Direccion"]
         for i, campo in enumerate(labels):
             label = QLabel(campo)
@@ -64,9 +72,11 @@ class AgregarProveedores(QWidget):
             if i == len(labels) - 1:
                 self.form_layout.addSpacing(24)
 
+        # buttons layout
         botones_layout = QHBoxLayout()
         botones_layout.setSpacing(10)
         border_radius_btn = 12
+        # button style
         estilo_boton = f"""
             QPushButton {{
                 background: #fff;
@@ -81,6 +91,7 @@ class AgregarProveedores(QWidget):
                 background-color: #eaeaea;
             }}
         """
+        # guardar btn
         btn_guardar = QPushButton("Guardar")
         btn_guardar.setFont(QFont("Poppins", 11, QFont.Weight.Bold))
         btn_guardar.setStyleSheet(estilo_boton)
@@ -88,6 +99,7 @@ class AgregarProveedores(QWidget):
         btn_guardar.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         btn_guardar.clicked.connect(self.guardar_proveedor)
 
+        # otro btn
         btn_otro = QPushButton("Agregar otro proveedor")
         btn_otro.setFont(QFont("Poppins", 11, QFont.Weight.Bold))
         btn_otro.setStyleSheet(estilo_boton)
@@ -95,10 +107,12 @@ class AgregarProveedores(QWidget):
         btn_otro.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         btn_otro.clicked.connect(self.limpiar_campos)
 
+        # add buttons
         botones_layout.addWidget(btn_guardar)
         botones_layout.addWidget(btn_otro)
         self.form_layout.addLayout(botones_layout)
 
+        # regresar btn
         btn_regresar = QPushButton("← Regresar")
         btn_regresar.setFont(QFont("Poppins", 11, QFont.Weight.Bold))
         btn_regresar.setStyleSheet(estilo_boton)
@@ -109,16 +123,20 @@ class AgregarProveedores(QWidget):
 
         main_layout.addWidget(self.form_widget, alignment=Qt.AlignmentFlag.AlignCenter)
 
+    # limpiar campos
     def limpiar_campos(self):
         for campo in self.campos.values():
             campo.clear()
 
+    # regresar
     def regresar(self):
         self.limpiar_campos()
         if self.regresar_callback:
             self.regresar_callback()
 
+    # guardar proveedor
     def guardar_proveedor(self):
+        # obtener datos
         id_proveedor = self.campos["Identificación"].text().strip()
         proveedor = self.campos["Proveedor"].text().strip()
         p_contacto = self.campos["Contacto"].text().strip()
@@ -128,9 +146,10 @@ class AgregarProveedores(QWidget):
         ok, msg = self.controller.agregar_proveedor(id_proveedor, proveedor, p_contacto, correo, telefono, direccion)
         self.mostrar_popup(msg, ok)
 
+    # mostrar popup
     def mostrar_popup(self, mensaje, exito):
         mbox = QMessageBox(self)
         mbox.setWindowTitle("Éxito" if exito else "Error")
         mbox.setText(mensaje)
         mbox.setIcon(QMessageBox.Icon.Information if exito else QMessageBox.Icon.Critical)
-        mbox.exec() 
+        mbox.exec()
