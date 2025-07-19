@@ -224,7 +224,7 @@ class ReportesView(QWidget):
         return self.producto_cb
 
     def create_summary_section(self, layout):
-        """Crea la sección de resumen con layout responsive"""
+        """Crea la sección de resumen con layout responsivo"""
         resumen_frame = QFrame()
         resumen_frame.setFrameStyle(QFrame.Shape.Box)
         resumen_frame.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
@@ -335,61 +335,33 @@ class ReportesView(QWidget):
             self.tabla.resizeColumnsToContents()
 
     def set_periodo(self, periodo):
-        """
-        Establece el período seleccionado y actualiza el título.
-
-        Args:
-            periodo (str): Período seleccionado ("Semanal" o "Mensual").
-        """
+        
         self.period_cb.setCurrentText(periodo)
         self.titulo.setText(f"Reporte {periodo}")
 
     def populate_clientes(self, clientes):
-        """
-        Pobla el combo box de clientes con la lista de clientes.
-
-        Args:
-            clientes (list): Lista de tuplas con el ID y nombre de cada cliente.
-        """
+      
         self.cliente_cb.clear()
         self.cliente_cb.addItem("Todos los clientes")
         for id_cliente, nombre in clientes:
             self.cliente_cb.addItem(f"{id_cliente} - {nombre}", id_cliente)
 
     def populate_productos(self, productos):
-        """
-        Pobla el combo box de productos con la lista de productos.
-
-        Args:
-            productos (list): Lista de tuplas con el ID y descripción de cada producto.
-        """
+        
         self.producto_cb.clear()
         self.producto_cb.addItem("Todos los productos")
         for id_producto, desc in productos:
             self.producto_cb.addItem(f"{id_producto} - {desc}", id_producto)
 
     def update_summary(self, total_ventas, total_pedidos, top_producto, top_cliente):
-        """
-        Actualiza los labels del resumen con los datos proporcionados.
-
-        Args:
-            total_ventas (float): Total de ventas.
-            total_pedidos (int): Total de pedidos.
-            top_producto (str): Producto más vendido.
-            top_cliente (str): Cliente top.
-        """
+        
         self.label_total_ventas.setText(f"Ventas Totales: ${total_ventas:.2f}")
         self.label_total_pedidos.setText(f"Total Pedidos: {total_pedidos}")
         self.label_producto_top.setText(f"Producto más vendido: {top_producto}")
         self.label_cliente_top.setText(f"Cliente top: {top_cliente}")
 
     def actualizar_tabla(self, datos):
-        """
-        Actualiza la tabla con el detalle de las ventas.
-
-        Args:
-            datos (list): Lista de tuplas con la fecha, cliente, producto, cantidad y subtotal de cada venta.
-        """
+        
         self.tabla.setRowCount(0)
         for row, (fecha, cliente, producto, cantidad, subtotal) in enumerate(datos):
             self.tabla.insertRow(row)
@@ -401,15 +373,7 @@ class ReportesView(QWidget):
         self.tabla.resizeColumnsToContents()
 
     def update_graphs(self, sales_data, client_data, best_products, worst_products):
-        """
-        Actualiza los gráficos con los datos proporcionados.
-
-        Args:
-            sales_data (list): Lista de tuplas con la fecha y el total de ventas.
-            client_data (list): Lista de tuplas con el nombre del cliente y el total de ventas.
-            best_products (list): Lista de tuplas con la descripción del producto y la cantidad vendida (mejores).
-            worst_products (list): Lista de tuplas con la descripción del producto y la cantidad vendida (peores).
-        """
+        
         for ax in self.axes.flat:
             ax.clear()
             ax.set_facecolor('#4d5a62')
@@ -453,9 +417,7 @@ class ReportesView(QWidget):
         self.canvas.draw()
 
     def reset_filters(self):
-        """
-        Restablece los filtros a sus valores predeterminados.
-        """
+       
         self.fecha_inicio.setDate(QDate.currentDate().addMonths(-1))
         self.fecha_fin.setDate(QDate.currentDate())
         self.cliente_cb.setCurrentIndex(0)
@@ -463,12 +425,7 @@ class ReportesView(QWidget):
         self.period_cb.setCurrentIndex(0)
 
     def get_filter_values(self):
-        """
-        Obtiene los valores actuales de los filtros.
-
-        Returns:
-            Un diccionario con los valores de los filtros.
-        """
+       
         return {
             'start_date': self.fecha_inicio.date().toString("yyyy-MM-dd"),
             'end_date': self.fecha_fin.date().toString("yyyy-MM-dd"),
@@ -478,37 +435,17 @@ class ReportesView(QWidget):
         }
 
     def set_start_date(self, start_date):
-        """
-        Establece la fecha de inicio del rango.
-
-        Args:
-            start_date (str): Fecha de inicio del rango.
-        """
+        
         self.fecha_inicio.setDate(QDate.fromString(start_date, "yyyy-MM-dd"))
 
     def show_error(self, message):
-        """
-        Muestra un mensaje de error.
-
-        Args:
-            message (str): Mensaje de error.
-        """
+        
         QMessageBox.critical(self, "Error", message)
 
     def show_info(self, message):
-        """
-        Muestra un mensaje de información.
-
-        Args:
-            message (str): Mensaje de información.
-        """
+        
         QMessageBox.information(self, "Información", message)
 
     def get_export_path(self):
-        """
-        Obtiene la ruta del archivo para exportar a Excel.
-
-        Returns:
-            La ruta del archivo seleccionado.
-        """
+       
         return QFileDialog.getSaveFileName(self, "Guardar Reporte", "reporte_ventas.xlsx", "Excel Files (*.xlsx)")[0]
