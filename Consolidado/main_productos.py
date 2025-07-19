@@ -5,7 +5,7 @@ from Consolidado.ventanaProductos import (
 
 def crear_sistema_productos():
     stack_productos = QStackedWidget()
-
+    #Crear la interfaz con los botones principales que llevan a otras ventanas
     ventana_inicio = VentanaProductosPrincipal(stack_productos)
     ventana_agregar = BaseProductoVentana(stack_productos, "Agregar Producto", "guardar", "Guardar", mostrar_buscar=False)
     ventana_eliminar = BaseProductoVentana(stack_productos, "Eliminar Producto", "eliminar", "Eliminar")
