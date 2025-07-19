@@ -1,3 +1,5 @@
+#Uso de PyQt6, Modelo.usuario y Vista.Usuario
+#Controla las acciones ingresar y regresar de la pantalla de vista_login
 from Modelo.usuario_modelo import validar_credenciales
 from PyQt6.QtWidgets import QMessageBox
 from Vista.Usuario.pantalla_administrador import PantallaAdministrador
@@ -6,7 +8,7 @@ class LoginControlador:
     def __init__(self, vista_login, stack):
         self.vista = vista_login
         self.stack = stack
-
+    #Dependiendo del ingreso del login se dirige al usuario a la pantalla del administrador o al panel de usuario
     def ingresar(self):
         usuario = self.vista.txt_usuario.text()
         contrasena = self.vista.txt_contrasena.text()
