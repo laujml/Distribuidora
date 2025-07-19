@@ -1,3 +1,6 @@
+#Se hace uso de PyQt6, Vista.los 3 dialogos "crear, modificar y eliminar usuario"
+# La interfaz del administrador contiene acciones que unicamente queremos que las personas con el rol de "administrador" puedan realizar.
+# Se realiza unicamente la parte vizual por medio de botones que diriguen a los dialogos antes mencionados o cerrar sesion que pide la confirmacion de "si o no"
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QMessageBox
 from PyQt6.QtCore import Qt
 from Vista.Usuario.dialogo_crear_usuario import CrearUsuarioDialog
@@ -18,13 +21,13 @@ class PantallaAdministrador(QWidget):
         titulo = QLabel("Panel de Administrador")
         titulo.setObjectName("titulo")
         titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        
+        #Creaciones de botones con crear, modificar, eliminar o cierre de sesion
         btn_crear = QPushButton("Crear nuevo usuario")
         btn_modificar = QPushButton("Modificar usuario")
         btn_eliminar = QPushButton("Eliminar usuario")
         btn_cerrar = QPushButton("Cerrar sesión")
         
-        # Conectar eventos
+        # Conectar eventos con los botones
         btn_crear.clicked.connect(self.crear_usuario)
         btn_modificar.clicked.connect(self.modificar_usuario)
         btn_eliminar.clicked.connect(self.eliminar_usuario)
@@ -37,7 +40,7 @@ class PantallaAdministrador(QWidget):
         layout.addWidget(btn_cerrar)
         
         self.setLayout(layout)
-    
+    #Son funciones que crean y ejecutan los dialogos correspondientes
     def crear_usuario(self):
         dialog = CrearUsuarioDialog()
         dialog.exec()
@@ -49,7 +52,7 @@ class PantallaAdministrador(QWidget):
     def eliminar_usuario(self):
         dialog = EliminarUsuarioDialog()
         dialog.exec()
-    
+    #Cierre de sesion
     def confirmar_cierre(self):
         confirm = QMessageBox.question(
             self, "Cerrar sesión", 
