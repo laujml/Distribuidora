@@ -234,6 +234,11 @@ class VerProductosTabla(QWidget):
         self.tabla.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         layout.addWidget(self.tabla)
 
+        # --- Botón Actualizar agregado aquí ---
+        btn_actualizar = QPushButton("Actualizar")
+        btn_actualizar.clicked.connect(self.cargar_datos)
+        layout.addWidget(btn_actualizar)
+
         btn_regresar = QPushButton("Regresar")
         btn_regresar.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(0))
         layout.addWidget(btn_regresar, alignment=Qt.AlignmentFlag.AlignCenter)
@@ -241,12 +246,7 @@ class VerProductosTabla(QWidget):
         self.setLayout(layout)
 
     def conectar_db(self):
-        return mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="distribuidora"
-        )
+        return conectar()
 
     def cargar_datos(self):
         try:
