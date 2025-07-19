@@ -4,14 +4,24 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import QSize, Qt, QTimer
 from PyQt6.QtGui import QIcon
+
+#Componentes de pedidos:
 from Consolidado.ventanaPedido import VentanaPedidos
 from Consolidado.ventanaClientes import MainClientes
+
+#componente de proveedores
 from Consolidado.ventanaProveedores import MainProveedores
+
+#componente del dashboard
 from Vista.Dashboard.pantalla_dashboard import PantallaDashboard
+
 # Importar los componentes de reportes
 from Vista.Reporte.pantalla_seleccion import PantallaSeleccion
 from Vista.Reporte.vista_reportes import ReportesView
 from Controlador.Reporte.controlador_reportes import ReportesController
+
+#IMportar productos
+from Consolidado.main_productos import crear_sistema_productos
 
 class MenuGestionPedidos(QWidget):
     def __init__(self, stack): 
@@ -162,8 +172,13 @@ class MenuGestionPedidos(QWidget):
                 self.stacked_widget.setCurrentWidget(error_widget)
 
         elif index == 4:  # Productos
-            widget = QLabel("Ventana de Productos")
-            widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            try:
+                widget_productos = crear_sistema_productos()
+                self.widgets_cache[index] = widget_productos  
+                self.stacked_widget.addWidget(widget_productos)
+                self.stacked_widget.setCurrentWidget(widget_productos)
+            except Exception as e:
+                error_widget = QLabel(f"Error al cargar Productos: {str(e)}")
 
         elif index == 5:  # Proveedores
             try:
