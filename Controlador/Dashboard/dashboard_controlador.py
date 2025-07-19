@@ -3,7 +3,7 @@ from Modelo.dashboard_modelo import (
     obtener_ingresos_dia,
     obtener_estado_inventario
 )
-
+# Junta todos los datos necesarios de ingresos de hoy y ayer, estado de inventario y lo coloca en obtener_datos_dashboard
 def obtener_datos_dashboard():
     from datetime import date, timedelta
 
