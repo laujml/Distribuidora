@@ -1,96 +1,200 @@
-from modelo_reportes import ReportesModel
-from vista_reportes import ReportesView
+import mysql.connector
+from datetime import datetime, timedelta
+import pandas as pd
+import os  
+from db_config import conectar
 
-class ReportesController:
-    def __init__(self, view):
-        # Constructor del controlador, inicia el modelo y la vista
-        self.model = None
-        self.view = view
-        self.connect_signals()
-        self.load_initial_data()
-
-    def connect_signals(self):
-        # Aquí se conectan los botones de la vista con las funciones del controlador
-        self.view.buscar_btn.clicked.connect(self.update_reports)
-        self.view.limpiar_btn.clicked.connect(self.clear_filters)
-        self.view.btn_exportar.clicked.connect(self.export_to_excel)
-        self.view.btn_actualizar.clicked.connect(self.update_reports)
-
-    def load_initial_data(self):
-        # Carga los datos iniciales al abrir la ventana, como clientes y productos
+class ReportesModel:
+    def __init__(self):
+        # Inicia la conexión a la base de datos
         try:
-            self.model = ReportesModel()
-            clientes = self.model.get_clientes()
-            productos = self.model.get_productos()
-            self.view.populate_clientes(clientes)
-            self.view.populate_productos(productos)
-            self.update_reports()
+            self.conn = conectar()
         except Exception as e:
-            self.view.show_error(str(e))
+            raise e
 
-    def update_reports(self):
-        # Actualiza los reportes según los filtros seleccionados por el usuario
+    def get_clientes(self):
+        # Obtiene la lista de clientes desde la base de datos
         try:
-            filters = self.view.get_filter_values()
-            start_date = filters['start_date']
-            end_date = filters['end_date']
-            if start_date > end_date:
-                self.view.show_error("La fecha de inicio no puede ser posterior a la fecha de fin.")
-                return
+            cursor = self.conn.cursor()
+            cursor.execute("SELECT ID_Cliente, Nombre FROM Cliente")
+            clientes = [(str(id_cliente), nombre) for id_cliente, nombre in cursor.fetchall()]
+            cursor.close()
+            return clientes
+        except mysql.connector.Error as e:
+            raise Exception(f"Error al obtener clientes: {e}")
 
-            cliente_id = filters['cliente_id']
-            producto_id = filters['producto_id']
-            period = filters['period']
-
-            # Si el periodo es semanal, ajusta la fecha de inicio
-            if period == "Semanal":
-                start_date = self.model.adjust_date_range(end_date, period)
-                self.view.set_start_date(start_date)
-
-            # Obtiene los datos principales para los reportes
-            total_ventas, total_pedidos = self.model.get_total_ventas(start_date, end_date, cliente_id)
-            top_cliente = self.model.get_top_cliente(start_date, end_date)
-            productos_vendidos = self.model.get_productos_vendidos(start_date, end_date, producto_id)
-            detalle_ventas = self.model.get_detalle_ventas(start_date, end_date)
-            ventas_por_fecha = self.model.get_ventas_por_fecha(start_date, end_date)
-            top_clientes = self.model.get_top_clientes(start_date, end_date)
-
-            # Selecciona los mejores y peores productos vendidos
-            best_products = productos_vendidos[-5:] if productos_vendidos else []
-            worst_products = productos_vendidos[:5] if productos_vendidos else []
-            top_producto = best_products[-1][0] if best_products else '-'
-
-            # Actualiza la vista con los datos obtenidos
-            self.view.update_summary(total_ventas, total_pedidos, top_producto, top_cliente)
-            self.view.actualizar_tabla(detalle_ventas)
-            self.view.update_graphs(ventas_por_fecha, top_clientes, best_products, worst_products)
-        except Exception as e:
-            self.view.show_error(str(e))
-
-    def clear_filters(self):
-        # Limpia los filtros y actualiza los reportes
-        self.view.reset_filters()
-        self.update_reports()
-
-    def export_to_excel(self):
-        # Exporta el reporte actual a un archivo Excel
+    def get_productos(self):
+        # Obtiene la lista de productos desde la base de datos
         try:
-            filters = self.view.get_filter_values()
-            filepath = self.view.get_export_path()
-            if not filepath:
-                return
-            success = self.model.export_to_excel(filters['start_date'], filters['end_date'], filepath)
-            if success:
-                self.view.show_info("Reporte exportado exitosamente.")
-        except Exception as e:
-            self.view.show_error(str(e))
+            cursor = self.conn.cursor()
+            cursor.execute("SELECT ID_Productos, descripcion FROM Productos")
+            productos = [(id_producto, desc) for id_producto, desc in cursor.fetchall()]
+            cursor.close()
+            return productos
+        except mysql.connector.Error as e:
+            raise Exception(f"Error al obtener productos: {e}")
 
-    def mostrar_reporte(self, period):
-        # Cambia el periodo del reporte y actualiza los datos
-        self.view.set_periodo(period)
-        self.update_reports()
+    def get_total_ventas(self, start_date, end_date, cliente_id=None):
+        # Retorna el total de ventas y el total de pedidos en el rango de fechas
+        try:
+            cursor = self.conn.cursor()
+            query = """
+                SELECT IFNULL(SUM(p.total), 0) as total_ventas, COUNT(p.ID_Pedido) as total_pedidos
+                FROM Pedido p
+                WHERE p.fecha_hora BETWEEN %s AND %s
+            """
+            params = [start_date, end_date]
+            if cliente_id:
+                query += " AND p.ID_Cliente = %s"
+                params.append(cliente_id)
+            cursor.execute(query, params)
+            result = cursor.fetchone()
+            cursor.close()
+            # Verifica que los totales sean correctos y no None
+            total_ventas = result[0] if result and result[0] is not None else 0
+            total_pedidos = result[1] if result and result[1] is not None else 0
+            return total_ventas, total_pedidos
+        except mysql.connector.Error as e:
+            raise Exception(f"Error al obtener total de ventas: {e}")
+
+    def get_top_cliente(self, start_date, end_date):
+        # Retorna el cliente con mayor monto de ventas en el rango de fechas
+        try:
+            cursor = self.conn.cursor()
+            query = """
+                SELECT c.Nombre, SUM(p.total) as total
+                FROM Pedido p
+                JOIN Cliente c ON p.ID_Cliente = c.ID_Cliente
+                WHERE p.fecha_hora BETWEEN %s AND %s
+                GROUP BY c.ID_Cliente, c.Nombre
+                ORDER BY total DESC
+                LIMIT 1
+            """
+            cursor.execute(query, [start_date, end_date])
+            result = cursor.fetchone()
+            cursor.close()
+            return result[0] if result else '-'
+        except mysql.connector.Error as e:
+            raise Exception(f"Error al obtener cliente top: {e}")
+
+    def get_productos_vendidos(self, start_date, end_date, producto_id=None):
+        # Retorna la lista de productos vendidos y la suma de pares por producto
+        try:
+            cursor = self.conn.cursor()
+            query = """
+                SELECT pr.descripcion, IFNULL(SUM(dp.cantidad_pares), 0) as total_pares
+                FROM detalle_pedido dp
+                JOIN Pedido p ON dp.ID_Pedido = p.ID_Pedido
+                JOIN Productos pr ON dp.ID_Productos = pr.ID_Productos
+                WHERE p.fecha_hora BETWEEN %s AND %s
+            """
+            params = [start_date, end_date]
+            if producto_id:
+                query += " AND dp.ID_Productos = %s"
+                params.append(producto_id)
+            query += " GROUP BY pr.ID_Productos, pr.descripcion ORDER BY total_pares"
+            cursor.execute(query, params)
+            result = cursor.fetchall()
+            cursor.close()
+            return result
+        except mysql.connector.Error as e:
+            raise Exception(f"Error al obtener productos vendidos: {e}")
+
+    def get_detalle_ventas(self, start_date, end_date, limit=1000):
+        # Retorna el detalle de ventas en el rango de fechas
+        try:
+            cursor = self.conn.cursor()
+            query = """
+                SELECT p.fecha_hora, c.Nombre, pr.descripcion, dp.cantidad_pares, dp.subtotal
+                FROM detalle_pedido dp
+                JOIN Pedido p ON dp.ID_Pedido = p.ID_Pedido
+                JOIN Cliente c ON p.ID_Cliente = c.ID_Cliente
+                JOIN Productos pr ON dp.ID_Productos = pr.ID_Productos
+                WHERE p.fecha_hora BETWEEN %s AND %s
+                LIMIT %s
+            """
+            cursor.execute(query, [start_date, end_date, limit])
+            result = cursor.fetchall()
+            cursor.close()
+            return result
+        except mysql.connector.Error as e:
+            raise Exception(f"Error al obtener detalle de ventas: {e}")
+
+    def get_ventas_por_fecha(self, start_date, end_date):
+        # Retorna la suma total de ventas agrupadas por fecha
+        try:
+            cursor = self.conn.cursor()
+            query = """
+                SELECT DATE(p.fecha_hora) as fecha, IFNULL(SUM(p.total), 0) as total
+                FROM Pedido p
+                WHERE p.fecha_hora BETWEEN %s AND %s
+                GROUP BY DATE(p.fecha_hora)
+            """
+            cursor.execute(query, [start_date, end_date])
+            result = cursor.fetchall()
+            cursor.close()
+            return result
+        except mysql.connector.Error as e:
+            raise Exception(f"Error al obtener ventas por fecha: {e}")
+
+    def get_top_clientes(self, start_date, end_date, limit=5):
+        # Retorna los clientes con mayor monto de ventas en el rango de fechas
+        try:
+            cursor = self.conn.cursor()
+            query = """
+                SELECT c.Nombre, IFNULL(SUM(p.total), 0) as total
+                FROM Pedido p
+                JOIN Cliente c ON p.ID_Cliente = c.ID_Cliente
+                WHERE p.fecha_hora BETWEEN %s AND %s
+                GROUP BY c.ID_Cliente, c.Nombre
+                ORDER BY total DESC
+                LIMIT %s
+            """
+            cursor.execute(query, [start_date, end_date, limit])
+            result = cursor.fetchall()
+            cursor.close()
+            return result
+        except mysql.connector.Error as e:
+            raise Exception(f"Error al obtener top clientes: {e}")
+
+    def export_to_excel(self, start_date, end_date, filepath=None):
+        # Exporta el reporte de ventas a un archivo Excel
+        try:
+            if filepath is None:
+                filepath = os.path.join(os.path.expanduser("~"), "reporte_ventas.xlsx")
+            cursor = self.conn.cursor()
+            query = """
+                SELECT p.fecha_hora, c.Nombre, pr.descripcion, dp.cantidad_pares, dp.subtotal
+                FROM detalle_pedido dp
+                JOIN Pedido p ON dp.ID_Pedido = p.ID_Pedido
+                JOIN Cliente c ON p.ID_Cliente = c.ID_Cliente
+                JOIN Productos pr ON dp.ID_Productos = pr.ID_Productos
+                WHERE p.fecha_hora BETWEEN %s AND %s
+            """
+            cursor.execute(query, [start_date, end_date])
+            data = cursor.fetchall()
+            cursor.close()
+            if not data:
+                raise Exception("No hay datos para exportar")
+            df = pd.DataFrame(data, columns=["Fecha", "Cliente", "Producto", "Cantidad", "Subtotal"])
+            df.to_excel(filepath, index=False)
+            return True
+        except Exception as e:
+            raise Exception(f"Error al exportar a Excel: {e}")
 
     def close(self):
-        # Cierra el modelo
-        if self.model:
-            self.model.close()
+        # Cierra la conexión a la base de datos
+        if self.conn.is_connected():
+            self.conn.close()
+
+    def adjust_date_range(self, end_date, period):
+        # Ajusta el rango de fechas según el periodo seleccionado (semanal o mensual)
+        try:
+            end_dt = datetime.strptime(end_date, "%Y-%m-%d")
+            if period == "Semanal":
+                start_dt = end_dt - timedelta(days=6)
+            else:  # Mensual
+                start_dt = end_dt - timedelta(days=30)
+            return start_dt.strftime("%Y-%m-%d")
+        except ValueError as e:
+            raise Exception(f"Formato de fecha inválido: {e}")
