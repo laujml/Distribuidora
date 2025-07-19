@@ -364,9 +364,9 @@ class VentanaProductosPrincipal(QWidget):
 
     def initUI(self):
         layout = QVBoxLayout()
-        titulo = QLabel("Gestión de Productos")
+        titulo = QLabel("Productos")
         titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        titulo.setStyleSheet("font-size: 20px; font-weight: bold; margin-bottom: 20px;")
+        titulo.setObjectName("titulo")
         layout.addWidget(titulo)
 
         botones = [
