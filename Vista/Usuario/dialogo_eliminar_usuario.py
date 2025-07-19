@@ -1,4 +1,7 @@
-# vista/dialogo_eliminar_usuario.py
+# Se hace uso de PyQt6 y Controlador.usuario
+#Dialogo para eliminar usuario es una ventana emergente que requiere del dato "usuario".
+# Se ejecuta unicamente al entrar por medio de la pantalla del administrador haciendo click en "Eliminar usuario"
+#Los datos son eliminados de la Base de Datos de la distribuidora
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLineEdit, QPushButton, QMessageBox
 from Controlador.Usuario.usuario_controlador import eliminar_usuario_existente
 
@@ -17,7 +20,7 @@ class EliminarUsuarioDialog(QDialog):
         layout.addWidget(self.usuario)
         layout.addWidget(btn_eliminar)
         self.setLayout(layout)
-
+    #Alerta si se elimina o no el usuario
     def eliminar_usuario(self):
         nombre = self.usuario.text()
 
