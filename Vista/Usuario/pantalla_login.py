@@ -1,3 +1,5 @@
+#Uso de PyQt6, os, sys y Controlador.Usuario
+# Es la primera pantalla que ejerce un funcionamiento de la aplicacion. Se trata de la parte visual y conexion para poder validar los datos del login
 from PyQt6.QtWidgets import (
     QWidget, QLabel, QLineEdit, QPushButton,
     QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QFrame
