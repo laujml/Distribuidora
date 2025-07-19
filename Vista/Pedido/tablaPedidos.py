@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QTableWidget, QTableWidgetItem
 
+#tabla padre para editarPedidos y editarPedidos
 class TablaPedido(QTableWidget):
     def __init__(self):
         super().__init__(0, 5)  # Inicializa con 0 filas y 5 columnas
