@@ -1,3 +1,5 @@
+#Se desarrolla toda la parte visual de la pantalla principal despues de la verificacion del login
+# Uso de PyQt6 y Controlador.Dashboard
 from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QFrame
 from PyQt6.QtCore import Qt
 from Controlador.Dashboard.dashboard_controlador import obtener_datos_dashboard
@@ -23,14 +25,14 @@ class PantallaDashboard(QWidget):
 
         self.panel_dashboard.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self.crear_dashboard()
-
+# Creacion exclusiva del Dashboard
     def crear_dashboard(self):
         titulo = QLabel("¡Bienvenido!")
         titulo.setObjectName("titulo")
         #titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.layout_dashboard.addWidget(titulo)
 
-        #INGRESOS
+        #INGRESOS: Se desarrolla la seccion de incresos por medio de tarjetas, definicion de titulos y subtitulos
         ingresos_layout = QHBoxLayout()
         ingresos_layout.setSpacing(30)
 
@@ -61,7 +63,7 @@ class PantallaDashboard(QWidget):
         ingresos_layout.addWidget(tarjeta_hoy)
         self.layout_dashboard.addLayout(ingresos_layout)
 
-        #INVENTARIO
+        #INVENTARIO: Se desarrolla la seccion de inventario por medio de tarjetas y subtitulos
         tarjeta_inv = QFrame(objectName="tarjeta")
         layout_inv = QVBoxLayout(tarjeta_inv)
         layout_inv.setAlignment(Qt.AlignmentFlag.AlignTop)
@@ -79,13 +81,14 @@ class PantallaDashboard(QWidget):
 
         self.layout_dashboard.addWidget(tarjeta_inv)
 
-        #ACTUALIZAR
+        #ACTUALIZAR: El boton actualizar tiene el fin de recargar la informacion de la base de datos para que sea reflejado en la  base. Se realiza la conexion al 
+        # hacer el respectivo click con actualizar_datos
         self.btn_actualizar = QPushButton("Actualizar datos")
         self.btn_actualizar.clicked.connect(self.actualizar_datos)
         self.layout_dashboard.addWidget(self.btn_actualizar, alignment=Qt.AlignmentFlag.AlignRight)
 
         self.actualizar_datos()
-
+        #Se extrae la data por medio de obtener_datos_dashboard, hacemos ajustes a 2 decimales y se puede presentar la informacion
     def actualizar_datos(self):
         datos = obtener_datos_dashboard()
         self.lbl_ayer.setText(f"${datos['ingresos_ayer']:.2f}")
