@@ -1,20 +1,23 @@
-from Modelo.modelo_reportes import ReportesModel
+from modelo_reportes import ReportesModel
+from vista_reportes import ReportesView
 
 class ReportesController:
-    def __init__(self, view=None):
+    def __init__(self, view):
+        # Constructor del controlador, inicia el modelo y la vista
         self.model = None
-        self.view = view  # Recibir la vista desde el main
-        if self.view:
-            self.connect_signals()
-            self.load_initial_data()
-    
+        self.view = view
+        self.connect_signals()
+        self.load_initial_data()
+
     def connect_signals(self):
+        # Aquí se conectan los botones de la vista con las funciones del controlador
         self.view.buscar_btn.clicked.connect(self.update_reports)
         self.view.limpiar_btn.clicked.connect(self.clear_filters)
         self.view.btn_exportar.clicked.connect(self.export_to_excel)
         self.view.btn_actualizar.clicked.connect(self.update_reports)
-    
+
     def load_initial_data(self):
+        # Carga los datos iniciales al abrir la ventana, como clientes y productos
         try:
             self.model = ReportesModel()
             clientes = self.model.get_clientes()
@@ -24,64 +27,70 @@ class ReportesController:
             self.update_reports()
         except Exception as e:
             self.view.show_error(str(e))
-    
+
     def update_reports(self):
+        # Actualiza los reportes según los filtros seleccionados por el usuario
         try:
             filters = self.view.get_filter_values()
             start_date = filters['start_date']
             end_date = filters['end_date']
-            
             if start_date > end_date:
                 self.view.show_error("La fecha de inicio no puede ser posterior a la fecha de fin.")
                 return
-            
+
             cliente_id = filters['cliente_id']
             producto_id = filters['producto_id']
             period = filters['period']
-            
+
+            # Si el periodo es semanal, ajusta la fecha de inicio
             if period == "Semanal":
                 start_date = self.model.adjust_date_range(end_date, period)
                 self.view.set_start_date(start_date)
-            
+
+            # Obtiene los datos principales para los reportes
             total_ventas, total_pedidos = self.model.get_total_ventas(start_date, end_date, cliente_id)
             top_cliente = self.model.get_top_cliente(start_date, end_date)
             productos_vendidos = self.model.get_productos_vendidos(start_date, end_date, producto_id)
             detalle_ventas = self.model.get_detalle_ventas(start_date, end_date)
             ventas_por_fecha = self.model.get_ventas_por_fecha(start_date, end_date)
             top_clientes = self.model.get_top_clientes(start_date, end_date)
-            
+
+            # Selecciona los mejores y peores productos vendidos
             best_products = productos_vendidos[-5:] if productos_vendidos else []
             worst_products = productos_vendidos[:5] if productos_vendidos else []
             top_producto = best_products[-1][0] if best_products else '-'
-            
+
+            # Actualiza la vista con los datos obtenidos
             self.view.update_summary(total_ventas, total_pedidos, top_producto, top_cliente)
             self.view.actualizar_tabla(detalle_ventas)
             self.view.update_graphs(ventas_por_fecha, top_clientes, best_products, worst_products)
-            
         except Exception as e:
             self.view.show_error(str(e))
-    
+
     def clear_filters(self):
+        # Limpia los filtros y actualiza los reportes
         self.view.reset_filters()
         self.update_reports()
-    
+
     def export_to_excel(self):
+        # Exporta el reporte actual a un archivo Excel
         try:
             filters = self.view.get_filter_values()
             filepath = self.view.get_export_path()
             if not filepath:
                 return
-            
             success = self.model.export_to_excel(filters['start_date'], filters['end_date'], filepath)
             if success:
                 self.view.show_info("Reporte exportado exitosamente.")
         except Exception as e:
             self.view.show_error(str(e))
-    
+
     def mostrar_reporte(self, period):
+        # Cambia el periodo del reporte y actualiza los datos
         self.view.set_periodo(period)
         self.update_reports()
-    
+
     def close(self):
+        # Cierra el modelo
         if self.model:
             self.model.close()
