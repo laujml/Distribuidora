@@ -19,6 +19,22 @@ class ActualizarClientes(QWidget):
         self.font = QFont("Poppins", 11)
         self.initUI()
 
+    def get_labels(self):
+        """Método que puede ser sobrescrito por clases hijas"""
+        return ["Identificación", "Nombre", "Correo", "Telefono", "Direccion"]
+
+    def get_titulo_ventana(self):
+        """Método que puede ser sobrescrito por clases hijas"""
+        return "Actualizar clientes"
+
+    def get_texto_boton_otro(self):
+        """Método que puede ser sobrescrito por clases hijas"""
+        return "Actualizar otro cliente"
+
+    def get_mensaje_confirmacion(self, id_item):
+        """Método que puede ser sobrescrito por clases hijas"""
+        return f"¿Seguro que deseas actualizar el cliente con ID {id_item}?"
+
     def initUI(self):
         # main layout
         main_layout = QVBoxLayout()
@@ -26,7 +42,7 @@ class ActualizarClientes(QWidget):
         self.setLayout(main_layout)
 
         # titulo
-        titulo_ventana = QLabel("Actualizar clientes")
+        titulo_ventana = QLabel(self.get_titulo_ventana())
         titulo_ventana.setFont(QFont("Poppins", 22, QFont.Weight.Bold))
         titulo_ventana.setStyleSheet("color: #fff; margin-top: 18px; margin-bottom: 18px;")
         titulo_ventana.setAlignment(Qt.AlignmentFlag.AlignHCenter)
@@ -54,8 +70,8 @@ class ActualizarClientes(QWidget):
                 font-family: 'Poppins', sans-serif;
             }}
         """
-        # crear campos
-        labels = ["Identificación", "Nombre", "Correo", "Telefono", "Direccion"]
+        # crear campos usando el método get_labels()
+        labels = self.get_labels()
         for i, campo in enumerate(labels):
             label = QLabel(campo)
             label.setFont(QFont("Poppins", 12, QFont.Weight.Medium))
@@ -98,7 +114,7 @@ class ActualizarClientes(QWidget):
         btn_buscar.setStyleSheet(estilo_boton)
         btn_buscar.setMinimumHeight(input_height)
         btn_buscar.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        btn_buscar.clicked.connect(self.buscar_cliente)
+        btn_buscar.clicked.connect(self.buscar_item)
 
         # actualizar btn
         btn_actualizar = QPushButton("Actualizar")
@@ -106,10 +122,10 @@ class ActualizarClientes(QWidget):
         btn_actualizar.setStyleSheet(estilo_boton)
         btn_actualizar.setMinimumHeight(input_height)
         btn_actualizar.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        btn_actualizar.clicked.connect(self.actualizar_cliente)
+        btn_actualizar.clicked.connect(self.actualizar_item)
 
         # otro btn
-        btn_otro = QPushButton("Actualizar otro cliente")
+        btn_otro = QPushButton(self.get_texto_boton_otro())
         btn_otro.setFont(QFont("Poppins", 11, QFont.Weight.Bold))
         btn_otro.setStyleSheet(estilo_boton)
         btn_otro.setMinimumHeight(input_height)
@@ -144,7 +160,16 @@ class ActualizarClientes(QWidget):
         if self.regresar_callback:
             self.regresar_callback()
 
-    # buscar cliente
+    # Métodos genéricos que pueden ser sobrescritos
+    def buscar_item(self):
+        """Método genérico para buscar - debe ser sobrescrito por clases hijas"""
+        return self.buscar_cliente()
+
+    def actualizar_item(self):
+        """Método genérico para actualizar - debe ser sobrescrito por clases hijas"""
+        return self.actualizar_cliente()
+
+    # buscar cliente (implementación original)
     def buscar_cliente(self):
         id_cliente = self.campos["Identificación"].text().strip()
         if not id_cliente.isdigit():
@@ -162,7 +187,7 @@ class ActualizarClientes(QWidget):
             self.limpiar_campos()
             self.campos["Identificación"].setText(id_cliente)
 
-    # actualizar cliente
+    # actualizar cliente (implementación original)
     def actualizar_cliente(self):
         # obtener datos
         id_cliente = self.campos["Identificación"].text().strip()
@@ -174,7 +199,7 @@ class ActualizarClientes(QWidget):
         telefono = self.campos["Telefono"].text().strip()
         direccion = self.campos["Direccion"].text().strip()
         # confirmar
-        confirm = QMessageBox.question(self, "Confirmar actualización", f"¿Seguro que deseas actualizar el cliente con ID {id_cliente}?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        confirm = QMessageBox.question(self, "Confirmar actualización", self.get_mensaje_confirmacion(id_cliente), QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         if confirm == QMessageBox.StandardButton.Yes:
             ok, msg = self.controller.actualizar_cliente(id_cliente, nombre, correo, telefono, direccion)
             self.mostrar_popup(msg, ok)
