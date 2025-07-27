@@ -146,6 +146,9 @@ class EliminarClientes(QWidget):
     # buscar cliente
     def buscar_cliente(self):
         id_cliente = self.campos["Identificación"].text().strip()
+        if not id_cliente.isdigit():
+            self.mostrar_popup("El ID ingresado es incorrecto. No se permiten letras, solo números.", False)
+            return
         ok, msg, cliente = self.controller.buscar_cliente(id_cliente)
         self.mostrar_popup(msg, ok)
         if ok and cliente:
@@ -161,6 +164,9 @@ class EliminarClientes(QWidget):
     # eliminar cliente
     def eliminar_cliente(self):
         id_cliente = self.campos["Identificación"].text().strip()
+        if not id_cliente.isdigit():
+            self.mostrar_popup("El ID ingresado es incorrecto. No se permiten letras, solo números.", False)
+            return
         # confirmar
         confirm = QMessageBox.question(self, "Confirmar eliminación", f"¿Seguro que deseas eliminar el cliente con ID {id_cliente}?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         if confirm == QMessageBox.StandardButton.Yes:
