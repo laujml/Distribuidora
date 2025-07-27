@@ -6,13 +6,13 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 from Recursos.Styles import Styles
 
-class AgregarClientes(QWidget):
+class AgregarProveedores(QWidget):
     def __init__(self, controller, regresar_callback=None):
         super().__init__()
         # init
         self.controller = controller
         self.regresar_callback = regresar_callback
-        self.setWindowTitle("Agregar clientes")
+        self.setWindowTitle("Agregar proveedores")
         self.setStyleSheet(Styles.global_stylesheet())
         self.setMinimumSize(500, 500)
         self.font = QFont("Poppins", 11)
@@ -25,7 +25,7 @@ class AgregarClientes(QWidget):
         self.setLayout(main_layout)
 
         # titulo
-        titulo_ventana = QLabel("Agregar clientes")
+        titulo_ventana = QLabel("Agregar proveedores")
         titulo_ventana.setFont(QFont("Poppins", 22, QFont.Weight.Bold))
         titulo_ventana.setStyleSheet("color: #fff; margin-top: 18px; margin-bottom: 18px;")
         titulo_ventana.setAlignment(Qt.AlignmentFlag.AlignHCenter)
@@ -54,7 +54,7 @@ class AgregarClientes(QWidget):
             }}
         """
         # crear campos
-        labels = ["Identificación", "Nombre", "Correo", "Telefono", "Direccion"]
+        labels = ["Identificación", "Proveedor", "Contacto", "Correo", "Telefono", "Direccion"]
         for i, campo in enumerate(labels):
             label = QLabel(campo)
             label.setFont(QFont("Poppins", 12, QFont.Weight.Medium))
@@ -97,10 +97,10 @@ class AgregarClientes(QWidget):
         btn_guardar.setStyleSheet(estilo_boton)
         btn_guardar.setMinimumHeight(input_height)
         btn_guardar.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        btn_guardar.clicked.connect(self.guardar_cliente)
+        btn_guardar.clicked.connect(self.guardar_proveedor)
 
         # otro btn
-        btn_otro = QPushButton("Agregar otro cliente")
+        btn_otro = QPushButton("Agregar otro proveedor")
         btn_otro.setFont(QFont("Poppins", 11, QFont.Weight.Bold))
         btn_otro.setStyleSheet(estilo_boton)
         btn_otro.setMinimumHeight(input_height)
@@ -134,18 +134,19 @@ class AgregarClientes(QWidget):
         if self.regresar_callback:
             self.regresar_callback()
 
-    # guardar cliente
-    def guardar_cliente(self):
+    # guardar proveedor
+    def guardar_proveedor(self):
         # obtener datos
-        id_cliente = self.campos["Identificación"].text().strip()
-        if not id_cliente.isdigit():
+        id_proveedor = self.campos["Identificación"].text().strip()
+        if not id_proveedor.isdigit():
             self.mostrar_popup("El ID ingresado es incorrecto. No se permiten letras, solo números.", False)
             return
-        nombre = self.campos["Nombre"].text().strip()
+        proveedor = self.campos["Proveedor"].text().strip()
+        p_contacto = self.campos["Contacto"].text().strip()
         correo = self.campos["Correo"].text().strip()
         telefono = self.campos["Telefono"].text().strip()
         direccion = self.campos["Direccion"].text().strip()
-        ok, msg = self.controller.agregar_cliente(id_cliente, nombre, correo, telefono, direccion)
+        ok, msg = self.controller.agregar_proveedor(id_proveedor, proveedor, p_contacto, correo, telefono, direccion)
         self.mostrar_popup(msg, ok)
 
     # mostrar popup
