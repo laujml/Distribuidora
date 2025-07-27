@@ -147,6 +147,9 @@ class ActualizarProveedores(QWidget):
     # buscar proveedor
     def buscar_proveedor(self):
         id_proveedor = self.campos["Identificación"].text().strip()
+        if not id_proveedor.isdigit():
+            self.mostrar_popup("El ID ingresado es incorrecto. No se permiten letras, solo números.", False)
+            return
         ok, msg, proveedor = self.controller.buscar_proveedor(id_proveedor)
         self.mostrar_popup(msg, ok)
         if ok and proveedor:
@@ -164,6 +167,9 @@ class ActualizarProveedores(QWidget):
     def actualizar_proveedor(self):
         # obtener datos
         id_proveedor = self.campos["Identificación"].text().strip()
+        if not id_proveedor.isdigit():
+            self.mostrar_popup("El ID ingresado es incorrecto. No se permiten letras, solo números.", False)
+            return
         proveedor = self.campos["Proveedor"].text().strip()
         p_contacto = self.campos["Contacto"].text().strip()
         correo = self.campos["Correo"].text().strip()
