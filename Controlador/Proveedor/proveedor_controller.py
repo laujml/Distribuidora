@@ -9,6 +9,8 @@ class ProveedorController:
         # validar campos
         if not all([id_proveedor, proveedor, p_contacto, correo, telefono]):
             return False, "Los campos ID, Proveedor, Contacto, Correo y Teléfono son obligatorios."
+        if not id_proveedor.isdigit():
+            return False, "El ID ingresado es incorrecto. No se permiten letras, solo números."
         # verificar si existe
         if self.model.buscar_proveedor(id_proveedor):
             return False, "El ID ya existe."
@@ -20,6 +22,8 @@ class ProveedorController:
         # validar id
         if not id_proveedor:
             return False, "Ingrese el ID a buscar.", None
+        if not id_proveedor.isdigit():
+            return False, "El ID ingresado es incorrecto. No se permiten letras, solo números.", None
         # buscar proveedor
         proveedor = self.model.buscar_proveedor(id_proveedor)
         if proveedor:
@@ -31,6 +35,8 @@ class ProveedorController:
         # validar campos
         if not all([id_proveedor, proveedor, p_contacto, correo, telefono]):
             return False, "Los campos ID, Proveedor, Contacto, Correo y Teléfono son obligatorios."
+        if not id_proveedor.isdigit():
+            return False, "El ID ingresado es incorrecto. No se permiten letras, solo números."
         # verificar si existe
         if not self.model.buscar_proveedor(id_proveedor):
             return False, "El proveedor no existe."
@@ -42,6 +48,8 @@ class ProveedorController:
         # validar id
         if not id_proveedor:
             return False, "Ingrese el ID a eliminar."
+        if not id_proveedor.isdigit():
+            return False, "El ID ingresado es incorrecto. No se permiten letras, solo números."
         # verificar si existe
         if not self.model.buscar_proveedor(id_proveedor):
             return False, "El proveedor no existe."
