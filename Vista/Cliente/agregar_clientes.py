@@ -138,6 +138,9 @@ class AgregarClientes(QWidget):
     def guardar_cliente(self):
         # obtener datos
         id_cliente = self.campos["Identificación"].text().strip()
+        if not id_cliente.isdigit():
+            self.mostrar_popup("El ID ingresado es incorrecto. No se permiten letras, solo números.", False)
+            return
         nombre = self.campos["Nombre"].text().strip()
         correo = self.campos["Correo"].text().strip()
         telefono = self.campos["Telefono"].text().strip()
