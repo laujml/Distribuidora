@@ -147,6 +147,9 @@ class ActualizarClientes(QWidget):
     # buscar cliente
     def buscar_cliente(self):
         id_cliente = self.campos["Identificación"].text().strip()
+        if not id_cliente.isdigit():
+            self.mostrar_popup("El ID ingresado es incorrecto. No se permiten letras, solo números.", False)
+            return
         ok, msg, cliente = self.controller.buscar_cliente(id_cliente)
         self.mostrar_popup(msg, ok)
         if ok and cliente:
@@ -163,6 +166,9 @@ class ActualizarClientes(QWidget):
     def actualizar_cliente(self):
         # obtener datos
         id_cliente = self.campos["Identificación"].text().strip()
+        if not id_cliente.isdigit():
+            self.mostrar_popup("El ID ingresado es incorrecto. No se permiten letras, solo números.", False)
+            return
         nombre = self.campos["Nombre"].text().strip()
         correo = self.campos["Correo"].text().strip()
         telefono = self.campos["Telefono"].text().strip()
