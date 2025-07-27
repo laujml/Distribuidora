@@ -1,40 +1,45 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel
-from PyQt6.QtCore import pyqtSignal, Qt
+from PyQt6.QtCore import pyqtSignal
+from Recursos.Styles import Styles
 
 class PantallaSeleccion(QWidget):
-    ir_a_semanal = pyqtSignal()  
-    ir_a_mensual = pyqtSignal()  
+    ir_a_semanal_signal = pyqtSignal()
+    ir_a_mensual_signal = pyqtSignal()
 
-    def __init__(self, stack):
+    def __init__(self, stack, controller):
         super().__init__()
         self.stack = stack
+        self.controller = controller
         self.init_ui()
 
     def init_ui(self):
-        self.content_layout = QVBoxLayout()
-        self.content_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout = QVBoxLayout()
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(10)
 
-        self.titulo = QLabel("Seleccione Tipo de Reporte")
-        self.content_layout.addWidget(self.titulo)
+        titulo = QLabel("Seleccione Tipo de Reporte")
+        Styles.apply_styles(titulo, "titulo")
+        layout.addWidget(titulo)
 
-        self.btn_semanal = QPushButton("Reporte Semanal")
-        self.btn_semanal.clicked.connect(self.go_to_weekly)
-        self.btn_semanal.setFixedSize(400, 100)
-        self.content_layout.addWidget(self.btn_semanal)
+        btn_semanal = QPushButton("Reporte Semanal")
+        Styles.apply_styles(btn_semanal)
+        btn_semanal.clicked.connect(self.show_semanal_report)
+        layout.addWidget(btn_semanal)
 
-        self.btn_mensual = QPushButton("Reporte Mensual")
+        btn_mensual = QPushButton("Reporte Mensual")
+        Styles.apply_styles(btn_mensual)
+        btn_mensual.clicked.connect(self.show_mensual_report)
+        layout.addWidget(btn_mensual)
 
-        self.btn_mensual.clicked.connect(self.go_to_monthly)
-        self.btn_mensual.setFixedSize(400, 100)
-        self.content_layout.addWidget(self.btn_mensual)
+        layout.addStretch()
+        self.setLayout(layout)
 
-        self.content_layout.addStretch()
-        self.setLayout(self.content_layout)
-
-    def go_to_weekly(self):
-        self.ir_a_semanal.emit()
+    def show_semanal_report(self):
+        self.ir_a_semanal_signal.emit()
+        self.controller.mostrar_reporte("Semanal")
         self.stack.setCurrentIndex(1)
 
-    def go_to_monthly(self):
-        self.ir_a_mensual.emit()
+    def show_mensual_report(self):
+        self.ir_a_mensual_signal.emit()
+        self.controller.mostrar_reporte("Mensual")
         self.stack.setCurrentIndex(1)
