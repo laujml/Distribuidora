@@ -138,6 +138,9 @@ class BuscarClientes(QWidget):
     # buscar cliente
     def buscar_cliente(self):
         id_cliente = self.campos["Identificación"].text().strip()
+        if not id_cliente.isdigit():
+            self.mostrar_popup("El ID ingresado es incorrecto. No se permiten letras, solo números.", False)
+            return
         ok, msg, cliente = self.controller.buscar_cliente(id_cliente)
         self.mostrar_popup(msg, ok)
         if ok and cliente:
