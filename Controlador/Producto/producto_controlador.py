@@ -76,7 +76,6 @@ class ProductoController:
 
             if filas_afectadas > 0:
                 self.vista_formulario.mostrar_mensaje("info", "Éxito", "Producto guardado correctamente.")
-                self.vista_formulario.limpiar_campos()
             else:
                 self.vista_formulario.mostrar_mensaje("error", "Error", "No se pudo guardar el producto.")
         except Exception as e:
@@ -92,7 +91,6 @@ class ProductoController:
             filas_afectadas = self.modelo.eliminar_producto(id_producto)
             if filas_afectadas > 0:
                 self.vista_formulario.mostrar_mensaje("info", "Eliminado", "Producto eliminado.")
-                self.vista_formulario.limpiar_campos()
             else:
                 self.vista_formulario.mostrar_mensaje("warning", "No encontrado", "Producto no existe.")
         except Exception as e:
