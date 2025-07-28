@@ -46,12 +46,12 @@ class MenuGestionPedidos(QWidget):
 
         # Contenedor con ancho fijo para el menú lateral
         menu_container = QWidget()
-        menu_container.setFixedWidth(140)
+        menu_container.setFixedWidth(150)
         menu_container.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
         
         # Layout del menú lateral
         layout_menu_lateral = QVBoxLayout(menu_container)
-        layout_menu_lateral.setContentsMargins(0, 0, 0, 0)  # Sin márgenes adicionales
+        layout_menu_lateral.setContentsMargins(0, 0, 0, 0)
 
         # Lista del menú
         self.lista_menu = QListWidget()
