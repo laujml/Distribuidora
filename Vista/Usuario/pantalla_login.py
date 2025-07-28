@@ -1,12 +1,13 @@
-#Uso de PyQt6, os, sys y Controlador.Usuario
+# Uso de PyQt6, os, sys y Controlador.Usuario
 # Es la primera pantalla que ejerce un funcionamiento de la aplicacion. Se trata de la parte visual y conexion para poder validar los datos del login
 from PyQt6.QtWidgets import (
     QWidget, QLabel, QLineEdit, QPushButton,
-    QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QFrame
+    QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QFrame, QApplication
 )
 from PyQt6.QtGui import QPixmap, QFont, QPainter, QPainterPath
 from PyQt6.QtCore import Qt
 from Controlador.Usuario.login_controlador import LoginControlador
+from Recursos.Styles import Styles
 import os
 import sys
 
@@ -33,6 +34,7 @@ class PantallaLogin(QWidget):
         layout_horizontal.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
         contenedor = QFrame()
+        contenedor.setObjectName("login_container")
         contenedor.setFixedWidth(350)
         layout_form = QVBoxLayout(contenedor)
         layout_form.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -40,10 +42,10 @@ class PantallaLogin(QWidget):
         
         # Logo
         self.logo = QLabel()
+        self.logo.setObjectName("logo_login")
         self.logo.setFixedSize(100, 100)
         self.logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
         logo_path = "Recursos/logo.jpg"
-        pixmap = QPixmap(logo_path)
         
         if os.path.exists(logo_path):
             pixmap = QPixmap(logo_path)
@@ -51,7 +53,7 @@ class PantallaLogin(QWidget):
             self.logo.setPixmap(rounded_pixmap)
         else:
             self.logo.setText("LOGO")
-            self.logo.setStyleSheet("border: 2px solid white; border-radius: 50px;")
+            self.logo.setObjectName("logo_login_fallback")
         
         logo_container = QHBoxLayout()
         logo_container.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -61,15 +63,18 @@ class PantallaLogin(QWidget):
         # Título
         self.lbl_titulo = QLabel("Inicio de sesión")
         self.lbl_titulo.setObjectName("titulo")
+        self.lbl_titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout_form.addWidget(self.lbl_titulo)
         
         # Campos de entrada
         self.txt_usuario = QLineEdit()
+        self.txt_usuario.setObjectName("login_input")
         self.txt_usuario.setPlaceholderText("Usuario")
         self.txt_usuario.setFixedHeight(40)
         layout_form.addWidget(self.txt_usuario)
         
         self.txt_contrasena = QLineEdit()
+        self.txt_contrasena.setObjectName("login_input")
         self.txt_contrasena.setPlaceholderText("Contraseña")
         self.txt_contrasena.setEchoMode(QLineEdit.EchoMode.Password)
         self.txt_contrasena.setFixedHeight(40)
@@ -77,12 +82,14 @@ class PantallaLogin(QWidget):
         
         # Botones
         self.btn_ingresar = QPushButton("Ingresar")
+        self.btn_ingresar.setObjectName("btn_login_primary")
         self.btn_ingresar.setFixedHeight(30)
         self.btn_ingresar.setCursor(Qt.CursorShape.PointingHandCursor)
         layout_form.addWidget(self.btn_ingresar)
         
         self.btn_regresar = QPushButton("Regresar")
-        self.btn_regresar.setFixedHeight(30)
+        self.btn_regresar.setObjectName("btn_login_secondary")
+        self.btn_regresar.setFixedHeight(40)
         self.btn_regresar.setCursor(Qt.CursorShape.PointingHandCursor)
         layout_form.addWidget(self.btn_regresar)
         
@@ -102,3 +109,11 @@ class PantallaLogin(QWidget):
         painter.drawPixmap(0, 0, pixmap)
         painter.end()
         return rounded
+
+if __name__ == "__main__":
+    # main
+    app = QApplication(sys.argv)
+    app.setStyleSheet(Styles.global_stylesheet())
+    ventana = PantallaLogin(None)
+    ventana.show()
+    sys.exit(app.exec())
