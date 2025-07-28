@@ -63,6 +63,11 @@ class VentanaPedidos(QWidget):
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
     def mostrar_crear_pedido(self):
+        self.controlador_crear = ControladorCrearPedidos()
+        self.pagina_crear = self.controlador_crear.get_vista()
+        self.pagina_crear.btn_regresar.clicked.connect(self.volver_menu)
+
+        self.stack.insertWidget(1, self.pagina_crear)
         self.stack.setCurrentWidget(self.pagina_crear)
 
     def mostrar_editar_pedido(self):
