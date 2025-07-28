@@ -1,6 +1,7 @@
 # Uso de Modelo.db_config
 # Modulo que contiene la validacion de credenciales, eliminacion, modificacion, agregar, obtener id y usuario
 from Modelo.db_config import conectar
+
 #Funcion para obtener todos los usuarios registrados usando sql
 def obtener_usuarios():
     conn = conectar()
@@ -15,12 +16,14 @@ def obtener_usuarios():
             "rol": u["tipoUsuario"]
         } for u in usuarios
     }
+
 #Funcion para obtener el siguiente ID disponible que se le puede brindar
 def obtener_nuevo_id(conn):
     cursor = conn.cursor()
     cursor.execute("SELECT MAX(ID_Usuario) FROM Usuario")
     max_id = cursor.fetchone()[0]
     return (max_id or 0) + 1
+
 #Funcion para agregar un nuevo usuario a la base de datos
 def agregar_usuario(usuario, clave, rol):
     conn = conectar()
@@ -32,6 +35,7 @@ def agregar_usuario(usuario, clave, rol):
     )
     conn.commit()
     conn.close()
+
 #Funcion que modifica la password de un usuario 
 def modificar_usuario(usuario, nueva_clave):
     conn = conectar()
@@ -42,6 +46,7 @@ def modificar_usuario(usuario, nueva_clave):
     )
     conn.commit()
     conn.close()
+
 #Funcion que elimina un usuario
 def eliminar_usuario(usuario):
     conn = conectar()
@@ -49,6 +54,7 @@ def eliminar_usuario(usuario):
     cursor.execute("DELETE FROM Usuario WHERE nombreUsuario=%s", (usuario,))
     conn.commit()
     conn.close()
+
 #Funcion que valida si el usuario y la password coinciden con los registrados
 def validar_credenciales(usuario, clave):
     conn = conectar()
@@ -60,4 +66,3 @@ def validar_credenciales(usuario, clave):
     if usuario_encontrado:
         return True, usuario_encontrado  
     return False, None
-
