@@ -6,7 +6,7 @@ from PyQt6.QtCore import Qt, QDate, pyqtSignal
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-from Recursos.Styles import Styles
+
 from Modelo.ui_config import UIConfig
 
 class ReportesView(QWidget):
@@ -25,7 +25,6 @@ class ReportesView(QWidget):
 
         self.titulo = QLabel("Reporte de Ventas")
         UIConfig.configure_label(self.titulo, is_title=True)
-        Styles.apply_styles(self.titulo, "titulo")
         main_layout.addWidget(self.titulo)
 
         filtros_layout = QHBoxLayout()
@@ -47,13 +46,10 @@ class ReportesView(QWidget):
 
         for cb in [self.period_cb, self.fecha_inicio, self.fecha_fin, self.cliente_cb, self.producto_cb]:
             UIConfig.configure_control(cb)
-            Styles.apply_styles(cb)
 
         self.buscar_btn = QPushButton("Buscar")
         self.limpiar_btn = QPushButton("Limpiar filtros")
         self.back_btn = QPushButton("Regresar")
-        for btn in [self.buscar_btn, self.limpiar_btn, self.back_btn]:
-            Styles.apply_styles(btn)
 
         self.back_btn.clicked.connect(self.back_clicked)
 
@@ -66,7 +62,6 @@ class ReportesView(QWidget):
         ]:
             label = QLabel(label_text)
             UIConfig.configure_label(label)
-            Styles.apply_styles(label, "filter_label")
             filtros_layout.addWidget(label)
             filtros_layout.addWidget(widget)
 
@@ -85,7 +80,6 @@ class ReportesView(QWidget):
 
         for label in [self.label_total_ventas, self.label_total_pedidos, self.label_producto_top, self.label_cliente_top]:
             UIConfig.configure_label(label)
-            Styles.apply_styles(label, "summary_label")
             resumen_layout.addWidget(label)
 
         main_layout.addLayout(resumen_layout)
@@ -101,7 +95,6 @@ class ReportesView(QWidget):
         self.btn_exportar = QPushButton("Exportar a Excel")
         self.btn_actualizar = QPushButton("Actualizar")
         for btn in [self.btn_exportar, self.btn_actualizar]:
-            Styles.apply_styles(btn)
             botones_layout.addWidget(btn)
         main_layout.addLayout(botones_layout)
 
@@ -112,7 +105,6 @@ class ReportesView(QWidget):
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
         scroll_area.setWidget(contenido_widget)
-        Styles.apply_styles(scroll_area)
 
         layout_final = QVBoxLayout()
         layout_final.addWidget(scroll_area)
@@ -153,28 +145,24 @@ class ReportesView(QWidget):
     def update_graphs(self, sales_data, client_data, best_products, worst_products):
         for ax in self.axes.flat:
             ax.clear()
-            ax.set_facecolor(Styles.BACKGROUND)
-            ax.tick_params(colors=Styles.WHITE)
-            for spine in ax.spines.values():
-                spine.set_color(Styles.BORDER)
         if sales_data:
             dates, totals = zip(*sales_data)
-            self.axes[0, 0].plot(dates, totals, color=Styles.WHITE)
-        self.axes[0, 0].set_title("Ventas Totales", color=Styles.WHITE)
+            self.axes[0, 0].plot(dates, totals)
+        self.axes[0, 0].set_title("Ventas Totales")
         self.axes[0, 0].tick_params(axis='x', rotation=45)
         if client_data:
             clients, client_totals = zip(*client_data)
-            self.axes[0, 1].bar(clients, client_totals, color=Styles.WHITE)
-        self.axes[0, 1].set_title("Mejores Clientes", color=Styles.WHITE)
+            self.axes[0, 1].bar(clients, client_totals)
+        self.axes[0, 1].set_title("Mejores Clientes")
         self.axes[0, 1].tick_params(axis='x', rotation=45)
         if best_products:
             products, quantities = zip(*best_products)
-            self.axes[1, 0].barh(products, quantities, color=Styles.WHITE)
-        self.axes[1, 0].set_title("Productos Más Vendidos", color=Styles.WHITE)
+            self.axes[1, 0].barh(products, quantities)
+        self.axes[1, 0].set_title("Productos Más Vendidos")
         if worst_products:
             products, quantities = zip(*worst_products)
-            self.axes[1, 1].barh(products, quantities, color=Styles.WHITE)
-        self.axes[1, 1].set_title("Productos Menos Vendidos", color=Styles.WHITE)
+            self.axes[1, 1].barh(products, quantities)
+        self.axes[1, 1].set_title("Productos Menos Vendidos")
         self.figure.tight_layout()
         self.canvas.draw()
 
