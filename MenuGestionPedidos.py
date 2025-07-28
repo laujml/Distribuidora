@@ -23,6 +23,7 @@ from Controlador.Reporte.controlador_reportes import ReportesController
 #IMportar productos
 from Consolidado.main_productos import crear_sistema_productos
 
+
 class MenuGestionPedidos(QWidget):
     def __init__(self, stack): 
         super().__init__()
@@ -44,9 +45,14 @@ class MenuGestionPedidos(QWidget):
     def menu(self):
         layout_principal = QHBoxLayout(self)
 
-        # Menú lateral
-        layout_menu_lateral = QVBoxLayout()
-        layout_principal.addLayout(layout_menu_lateral, 1)
+        # ✅ Contenedor con ancho fijo para el menú lateral
+        menu_container = QWidget()
+        menu_container.setFixedWidth(140)  # Ancho fijo de 250px
+        menu_container.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        
+        # Layout del menú lateral
+        layout_menu_lateral = QVBoxLayout(menu_container)
+        layout_menu_lateral.setContentsMargins(0, 0, 0, 0)  # Sin márgenes adicionales
 
         # Lista del menú
         self.lista_menu = QListWidget()
@@ -74,10 +80,13 @@ class MenuGestionPedidos(QWidget):
         for opcion in opciones:
             self.lista_menu.addItem(QListWidgetItem(opcion))
 
-        # Panel derecho
+        # ✅ Agregar el contenedor del menú al layout principal
+        layout_principal.addWidget(menu_container)
+
+        # Panel derecho con el contenido principal
         self.stacked_widget = QStackedWidget()
         self.stacked_widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        layout_principal.addWidget(self.stacked_widget, 4)
+        layout_principal.addWidget(self.stacked_widget)  # Sin factor de stretch, toma todo el espacio restante
 
         # Precargar Dashboard (índice 1)
         try:
@@ -107,22 +116,25 @@ class MenuGestionPedidos(QWidget):
             # Crear el stack para reportes
             self.reportes_stack = QStackedWidget()
             
-            # Crear la pantalla de selección
-            seleccion = PantallaSeleccion(self.reportes_stack)
-            
             # Crear la vista de reportes
             reportes_view = ReportesView()
             
-            # Crear el controlador
-            self.reportes_controller = ReportesController(reportes_view)
+            # Crear la pantalla de selección
+            seleccion = PantallaSeleccion(self.reportes_stack, None)  # Temporalmente sin controlador
             
             # Agregar las vistas al stack de reportes
-            self.reportes_stack.addWidget(seleccion)
-            self.reportes_stack.addWidget(reportes_view)
+            self.reportes_stack.addWidget(seleccion)      # Índice 0
+            self.reportes_stack.addWidget(reportes_view)  # Índice 1
             
-            # Conectar las señales
-            seleccion.ir_a_semanal.connect(lambda: self.reportes_controller.mostrar_reporte("Semanal"))
-            seleccion.ir_a_mensual.connect(lambda: self.reportes_controller.mostrar_reporte("Mensual"))
+            # AHORA crear el controlador con el stack ya poblado
+            self.reportes_controller = ReportesController(reportes_view, self.reportes_stack)
+            
+            # Asignar el controlador a la pantalla de selección
+            seleccion.controller = self.reportes_controller
+            
+            # Conectar las señales manualmente para asegurar que funcionen
+            seleccion.ir_a_semanal_signal.connect(lambda: self.reportes_controller.mostrar_reporte("Semanal"))
+            seleccion.ir_a_mensual_signal.connect(lambda: self.reportes_controller.mostrar_reporte("Mensual"))
             
             # Establecer la pantalla inicial (selección)
             self.reportes_stack.setCurrentIndex(0)
