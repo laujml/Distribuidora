@@ -13,9 +13,7 @@ class AgregarClientes(QWidget):
         self.controller = controller
         self.regresar_callback = regresar_callback
         self.setWindowTitle("Agregar clientes")
-        self.setStyleSheet(Styles.global_stylesheet())
         self.setMinimumSize(500, 500)
-        self.font = QFont("Poppins", 11)
         self.initUI()
 
     def get_labels(self):
@@ -38,13 +36,13 @@ class AgregarClientes(QWidget):
 
         # titulo
         titulo_ventana = QLabel(self.get_titulo_ventana())
-        titulo_ventana.setFont(QFont("Poppins", 22, QFont.Weight.Bold))
-        titulo_ventana.setStyleSheet("color: #fff; margin-top: 18px; margin-bottom: 18px;")
+        titulo_ventana.setObjectName("titulo")
         titulo_ventana.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         main_layout.addWidget(titulo_ventana)
 
         # form widget
         self.form_widget = QWidget()
+        self.form_widget.setObjectName("form_widget")
         self.form_layout = QVBoxLayout()
         self.form_layout.setSpacing(10)
         self.form_widget.setLayout(self.form_layout)
@@ -52,70 +50,37 @@ class AgregarClientes(QWidget):
 
         # campos dict
         self.campos = {}
-        input_height = 38
-        border_radius_input = 19
-        # input style
-        estilo_input = f"""
-            QLineEdit {{
-                background: #fff;
-                border-radius: {border_radius_input}px;
-                border: none;
-                padding: 6px 16px;
-                font-size: 1rem;
-                font-family: 'Poppins', sans-serif;
-            }}
-        """
+        
         # crear campos usando el método get_labels()
         labels = self.get_labels()
         for i, campo in enumerate(labels):
             label = QLabel(campo)
-            label.setFont(QFont("Poppins", 12, QFont.Weight.Medium))
-            label.setStyleSheet("color: #fff; margin-bottom: 2px;")
+            label.setObjectName("campo_label")
             label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
             self.form_layout.addWidget(label)
+            
             input_ = QLineEdit()
-            input_.setFont(self.font)
-            input_.setStyleSheet(estilo_input)
-            input_.setMinimumHeight(input_height)
-            input_.setMaximumHeight(input_height)
+            input_.setObjectName("campo_input")
             input_.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
             self.form_layout.addWidget(input_)
             self.campos[campo] = input_
+            
             if i == len(labels) - 1:
                 self.form_layout.addSpacing(24)
 
         # buttons layout
         botones_layout = QHBoxLayout()
         botones_layout.setSpacing(10)
-        border_radius_btn = 12
-        # button style
-        estilo_boton = f"""
-            QPushButton {{
-                background: #fff;
-                color: #222;
-                border-radius: {border_radius_btn}px;
-                padding: 6px 18px;
-                font-size: 1rem;
-                font-weight: 600;
-                font-family: 'Poppins', sans-serif;
-            }}
-            QPushButton:hover {{
-                background-color: #eaeaea;
-            }}
-        """
+
         # guardar btn
         btn_guardar = QPushButton("Guardar")
-        btn_guardar.setFont(QFont("Poppins", 11, QFont.Weight.Bold))
-        btn_guardar.setStyleSheet(estilo_boton)
-        btn_guardar.setMinimumHeight(input_height)
+        btn_guardar.setObjectName("btn_primary")
         btn_guardar.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         btn_guardar.clicked.connect(self.guardar_item)
 
         # otro btn
         btn_otro = QPushButton(self.get_texto_boton_otro())
-        btn_otro.setFont(QFont("Poppins", 11, QFont.Weight.Bold))
-        btn_otro.setStyleSheet(estilo_boton)
-        btn_otro.setMinimumHeight(input_height)
+        btn_otro.setObjectName("btn_primary")
         btn_otro.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         btn_otro.clicked.connect(self.limpiar_campos)
 
@@ -126,9 +91,7 @@ class AgregarClientes(QWidget):
 
         # regresar btn
         btn_regresar = QPushButton("← Regresar")
-        btn_regresar.setFont(QFont("Poppins", 11, QFont.Weight.Bold))
-        btn_regresar.setStyleSheet(estilo_boton)
-        btn_regresar.setMinimumHeight(input_height)
+        btn_regresar.setObjectName("btn_secondary")
         btn_regresar.setMaximumWidth(140)
         btn_regresar.clicked.connect(self.regresar)
         self.form_layout.addWidget(btn_regresar, alignment=Qt.AlignmentFlag.AlignHCenter)
