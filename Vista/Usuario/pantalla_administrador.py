@@ -52,6 +52,7 @@ class PantallaAdministrador(QWidget):
     def eliminar_usuario(self):
         dialog = EliminarUsuarioDialog()
         dialog.exec()
+    
     #Cierre de sesion
     def confirmar_cierre(self):
         confirm = QMessageBox.question(
