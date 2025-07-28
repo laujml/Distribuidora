@@ -1,40 +1,63 @@
-import sys
-from PyQt6.QtWidgets import QApplication, QStackedWidget
-from pantalla_seleccion import PantallaSeleccion
-from vista_reportes import ReportesView
-from controlador_reportes import ReportesController
-from db_config import conectar
+# reportes_main.py - Archivo separado o función en tu main principal
 
-def main():
-    app = QApplication(sys.argv)
+from PyQt6.QtWidgets import QStackedWidget
+from Vista.Reporte.pantalla_seleccion import PantallaSeleccion
+from Vista.Reporte.vista_reportes import ReportesView
+from Controlador.Reporte.controlador_reportes import ReportesController
+from Modelo.db_config import conectar
+
+def crear_modulo_reportes():
+    """
+    Función que crea y configura todo el módulo de reportes
+    Retorna el widget principal listo para usar
+    """
+    # Crear el stack principal de reportes
     stack = QStackedWidget()
     
     # Crear vista y controlador
     reportes_view = ReportesView()
-    reportes_controller = ReportesController(reportes_view, conectar)  # Pasar la función conectar
+    reportes_controller = ReportesController(reportes_view, conectar)
     
-    # Asignar el stack al controlador para que pueda navegar
+    # Asignar el stack al controlador para navegación
     reportes_controller.set_stack(stack)
     
     # Crear pantalla de selección
     seleccion = PantallaSeleccion(stack)
     
-    # Agregar al stack
-    stack.addWidget(seleccion)
-    stack.addWidget(reportes_view)
+    # Agregar widgets al stack
+    stack.addWidget(seleccion)      # Índice 0
+    stack.addWidget(reportes_view)  # Índice 1
     
     # Conectar señales de la pantalla de selección
     seleccion.ir_a_semanal.connect(lambda: reportes_controller.mostrar_reporte("Semanal"))
     seleccion.ir_a_mensual.connect(lambda: reportes_controller.mostrar_reporte("Mensual"))
     
-    # Conectar señal del botón regresar de la vista de reportes
+    # Conectar señal del botón regresar
     reportes_view.regresar_clicked.connect(lambda: stack.setCurrentIndex(0))
     
-    # Mostrar
+    # Mostrar pantalla inicial
     stack.setCurrentIndex(0)
-    stack.show()
     
+    # Agregar referencias para limpieza posterior si es necesario
+    stack.reportes_controller = reportes_controller  # Para poder cerrar conexiones después
+    stack.reportes_view = reportes_view
+    stack.seleccion = seleccion
+    
+    return stack
+
+def main_reportes_standalone():
+    """Función para ejecutar reportes como aplicación independiente"""
+    import sys
+    from PyQt6.QtWidgets import QApplication
+    
+    app = QApplication(sys.argv)
+    
+    # Crear módulo de reportes
+    reportes_widget = crear_modulo_reportes()
+    
+    # Mostrar
+    reportes_widget.show()
     sys.exit(app.exec())
 
 if __name__ == "__main__":
-    main()
+    main_reportes_standalone()
