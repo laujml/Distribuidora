@@ -23,7 +23,7 @@ class TablaProductosView(QWidget):
         # Título
         titulo = QLabel("Lista de Productos")
         titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        titulo.setStyleSheet("font-size: 20px; font-weight: bold; margin-bottom: 10px;")
+        titulo.setObjectName("titulo")
         layout.addWidget(titulo)
         
         # Tabla
