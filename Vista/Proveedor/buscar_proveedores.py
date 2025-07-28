@@ -40,7 +40,7 @@ class BuscarProveedores(BuscarClientes):
             self.campos["Contacto"].setText(proveedor["P_Contacto"])
             self.campos["Correo"].setText(proveedor["Correo"])
             self.campos["Telefono"].setText(proveedor["Telefono"])
-            self.campos["Direccion"].setText(proveedor["Direccion_Proveedor"] or "")
+            self.campos["Direccion"].setText(proveedor["Direccion"] or "")
         else:
             self.limpiar_campos()
             self.campos["Identificación"].setText(id_proveedor)
