@@ -21,8 +21,7 @@ from Vista.Reporte.vista_reportes import ReportesView
 from Controlador.Reporte.controlador_reportes import ReportesController
 
 #IMportar productos
-from Consolidado.main_productos import crear_sistema_productos
-
+from Consolidado.ventanaProducto import AplicacionProductos
 
 class MenuGestionPedidos(QWidget):
     def __init__(self, stack): 
@@ -110,49 +109,6 @@ class MenuGestionPedidos(QWidget):
             self.widgets_cache[3] = error_widget
             self.stacked_widget.addWidget(error_widget)
 
-    def crear_sistema_reportes(self):
-        """Crea el sistema de reportes completo"""
-        try:
-            # Crear el stack para reportes
-            self.reportes_stack = QStackedWidget()
-            
-            # Crear la vista de reportes
-            reportes_view = ReportesView()
-            
-            # Crear la pantalla de selección
-            seleccion = PantallaSeleccion(self.reportes_stack, None)  # Temporalmente sin controlador
-            
-            # Agregar las vistas al stack de reportes
-            self.reportes_stack.addWidget(seleccion)      # Índice 0
-            self.reportes_stack.addWidget(reportes_view)  # Índice 1
-            
-            # AHORA crear el controlador con el stack ya poblado
-            self.reportes_controller = ReportesController(reportes_view, self.reportes_stack)
-            
-            # Asignar el controlador a la pantalla de selección
-            seleccion.controller = self.reportes_controller
-            
-            # Conectar las señales manualmente para asegurar que funcionen
-            seleccion.ir_a_semanal_signal.connect(lambda: self.reportes_controller.mostrar_reporte("Semanal"))
-            seleccion.ir_a_mensual_signal.connect(lambda: self.reportes_controller.mostrar_reporte("Mensual"))
-            
-            # Establecer la pantalla inicial (selección)
-            self.reportes_stack.setCurrentIndex(0)
-            
-            return self.reportes_stack
-            
-        except Exception as e:
-            error_widget = QLabel(f"Error al crear sistema de reportes: {str(e)}")
-            error_widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            error_widget.setStyleSheet("""
-                QLabel {
-                    color: red;
-                    font-size: 14px;
-                    padding: 20px;
-                }
-            """)
-            return error_widget
-
     def entrar_ventana_seguro(self, index):
         """Evita conflictos al cambiar entre ventanas"""
         if index == self.current_index:
@@ -185,12 +141,17 @@ class MenuGestionPedidos(QWidget):
 
         elif index == 4:  # Productos
             try:
-                widget_productos = crear_sistema_productos()
-                self.widgets_cache[index] = widget_productos  
-                self.stacked_widget.addWidget(widget_productos)
-                self.stacked_widget.setCurrentWidget(widget_productos)
+                widget_productos = AplicacionProductos(parent=self)  # Pasar parent
+                widget_productos_main = widget_productos.stacked_widget
+                self.widgets_cache[index] = widget_productos_main
+                self.stacked_widget.addWidget(widget_productos_main)
+                self.stacked_widget.setCurrentWidget(widget_productos_main)
             except Exception as e:
                 error_widget = QLabel(f"Error al cargar Productos: {str(e)}")
+                error_widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                self.widgets_cache[index] = error_widget
+                self.stacked_widget.addWidget(error_widget)
+                self.stacked_widget.setCurrentWidget(error_widget)
 
         elif index == 5:  # Proveedores
             try:
