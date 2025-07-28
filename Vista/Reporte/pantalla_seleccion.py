@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel
 from PyQt6.QtCore import pyqtSignal
-from Recursos.Styles import Styles
+from Styles import Styles
+from Modelo.ui_config import UIConfig
 
 class PantallaSeleccion(QWidget):
     ir_a_semanal_signal = pyqtSignal()
@@ -14,19 +15,21 @@ class PantallaSeleccion(QWidget):
 
     def init_ui(self):
         layout = QVBoxLayout()
-        layout.setContentsMargins(10, 10, 10, 10)
-        layout.setSpacing(10)
+        UIConfig.configure_layout(layout, is_selection=True)
 
         titulo = QLabel("Seleccione Tipo de Reporte")
+        UIConfig.configure_label(titulo, is_title=True)
         Styles.apply_styles(titulo, "titulo")
         layout.addWidget(titulo)
 
         btn_semanal = QPushButton("Reporte Semanal")
+        UIConfig.configure_control(btn_semanal)
         Styles.apply_styles(btn_semanal)
         btn_semanal.clicked.connect(self.show_semanal_report)
         layout.addWidget(btn_semanal)
 
         btn_mensual = QPushButton("Reporte Mensual")
+        UIConfig.configure_control(btn_mensual)
         Styles.apply_styles(btn_mensual)
         btn_mensual.clicked.connect(self.show_mensual_report)
         layout.addWidget(btn_mensual)
