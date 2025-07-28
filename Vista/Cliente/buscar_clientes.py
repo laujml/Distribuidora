@@ -19,6 +19,18 @@ class BuscarClientes(QWidget):
         self.font = QFont("Poppins", 11)
         self.initUI()
 
+    def get_labels(self):
+        """Método que puede ser sobrescrito por clases hijas"""
+        return ["Identificación", "Nombre", "Correo", "Telefono", "Direccion"]
+
+    def get_titulo_ventana(self):
+        """Método que puede ser sobrescrito por clases hijas"""
+        return "Buscar clientes"
+
+    def get_texto_boton_otro(self):
+        """Método que puede ser sobrescrito por clases hijas"""
+        return "Buscar otro cliente"
+
     def initUI(self):
         # main layout
         main_layout = QVBoxLayout()
@@ -26,7 +38,7 @@ class BuscarClientes(QWidget):
         self.setLayout(main_layout)
 
         # titulo
-        titulo_ventana = QLabel("Buscar clientes")
+        titulo_ventana = QLabel(self.get_titulo_ventana())
         titulo_ventana.setFont(QFont("Poppins", 22, QFont.Weight.Bold))
         titulo_ventana.setStyleSheet("color: #fff; margin-top: 18px; margin-bottom: 18px;")
         titulo_ventana.setAlignment(Qt.AlignmentFlag.AlignHCenter)
@@ -54,8 +66,8 @@ class BuscarClientes(QWidget):
                 font-family: 'Poppins', sans-serif;
             }}
         """
-        # crear campos
-        labels = ["Identificación", "Nombre", "Correo", "Telefono", "Direccion"]
+        # crear campos usando el método get_labels()
+        labels = self.get_labels()
         for i, campo in enumerate(labels):
             label = QLabel(campo)
             label.setFont(QFont("Poppins", 12, QFont.Weight.Medium))
@@ -98,10 +110,10 @@ class BuscarClientes(QWidget):
         btn_buscar.setStyleSheet(estilo_boton)
         btn_buscar.setMinimumHeight(input_height)
         btn_buscar.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        btn_buscar.clicked.connect(self.buscar_cliente)
+        btn_buscar.clicked.connect(self.buscar_item)
 
         # otro btn
-        btn_otro = QPushButton("Buscar otro cliente")
+        btn_otro = QPushButton(self.get_texto_boton_otro())
         btn_otro.setFont(QFont("Poppins", 11, QFont.Weight.Bold))
         btn_otro.setStyleSheet(estilo_boton)
         btn_otro.setMinimumHeight(input_height)
@@ -135,12 +147,14 @@ class BuscarClientes(QWidget):
         if self.regresar_callback:
             self.regresar_callback()
 
-    # buscar cliente
+    # Método genérico que puede ser sobrescrito
+    def buscar_item(self):
+        """Método genérico para buscar - debe ser sobrescrito por clases hijas"""
+        return self.buscar_cliente()
+
+    # buscar cliente (implementación original)
     def buscar_cliente(self):
         id_cliente = self.campos["Identificación"].text().strip()
-        if not id_cliente.isdigit():
-            self.mostrar_popup("El ID ingresado es incorrecto. No se permiten letras, solo números.", False)
-            return
         ok, msg, cliente = self.controller.buscar_cliente(id_cliente)
         self.mostrar_popup(msg, ok)
         if ok and cliente:
