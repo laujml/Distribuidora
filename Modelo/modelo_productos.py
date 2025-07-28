@@ -111,3 +111,12 @@ class ProductoModel:
         cursor.close()
         conn.close()
         return productos_insertados, productos_actualizados
+    
+    def proveedor_existe(self, id_proveedor):
+        conn = self.conectar_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM Proveedor WHERE ID_Proveedor = %s", (id_proveedor,))
+        existe = cursor.fetchone()[0] > 0
+        cursor.close()
+        conn.close()
+        return existe
