@@ -21,6 +21,7 @@ class ControladorEditarPedidos(ControladorCrearPedidos):
         self.vista.resetear_pedido_signal.connect(self.resetear_pedido)
 
         self.cargar_productos()
+        self.cargar_estados()
         self.cargar_clientes()
         self.cargar_datos_iniciales()
 
@@ -66,6 +67,15 @@ class ControladorEditarPedidos(ControladorCrearPedidos):
 
             # Extraer ID del cliente del texto
             id_cliente = datos_formulario['texto_cliente'].split("-")[0].strip() if "-" in datos_formulario['texto_cliente'] else datos_formulario['texto_cliente']
+            
+            # verificación de que el cliente existe
+            clientes_validos = self.modelo.obtener_clientes()
+            clientes_ids = [c.split("-")[0].strip() for c in clientes_validos]
+            if id_cliente not in clientes_ids:
+                QMessageBox.critical(self.vista, "Cliente no válido",
+                                    "El cliente ingresado no existe. Selecciónelo desde el autocompletado.")
+                return
+            
             id_pedido = self.pedido_actual["numero"]
 
             # Actualizar pedido en el modelo
