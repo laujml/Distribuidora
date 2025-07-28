@@ -9,7 +9,7 @@ class ProveedorModel:
 
     def agregar_proveedor(self, id_proveedor, proveedor, p_contacto, correo, telefono, direccion_proveedor):
         # insert query
-        sql = "INSERT INTO Proveedor (ID_Proveedor, Proveedor, P_Contacto, Correo, Telefono, Direccion_Proveedor) VALUES (%s, %s, %s, %s, %s, %s)"
+        sql = "INSERT INTO Proveedor (ID_Proveedor, Proveedor, P_Contacto, Correo, Telefono, Direccion) VALUES (%s, %s, %s, %s, %s, %s)"
         self.cursor.execute(sql, (id_proveedor, proveedor, p_contacto, correo, telefono, direccion_proveedor))
         self.conn.commit()
 
@@ -21,7 +21,7 @@ class ProveedorModel:
 
     def actualizar_proveedor(self, id_proveedor, proveedor, p_contacto, correo, telefono, direccion_proveedor):
         # update query
-        sql = "UPDATE Proveedor SET Proveedor=%s, P_Contacto=%s, Correo=%s, Telefono=%s, Direccion_Proveedor=%s WHERE ID_Proveedor=%s"
+        sql = "UPDATE Proveedor SET Proveedor=%s, P_Contacto=%s, Correo=%s, Telefono=%s, Direccion=%s WHERE ID_Proveedor=%s"
         self.cursor.execute(sql, (proveedor, p_contacto, correo, telefono, direccion_proveedor, id_proveedor))
         self.conn.commit()
 
