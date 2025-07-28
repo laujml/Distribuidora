@@ -1,7 +1,7 @@
 # Vista/FormularioProductoView.py
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit,
-    QLabel, QMessageBox, QScrollArea
+    QLabel, QMessageBox, QSizePolicy
 )
 from PyQt6.QtCore import Qt
 
@@ -17,44 +17,42 @@ class FormularioProductoView(QWidget):
         self.mostrar_buscar = mostrar_buscar
         self.controlador = controlador  # Referencia al controlador
         self.inputs = {}
+        self.setWindowTitle(titulo)
+        self.setMinimumSize(500, 600)  # Tamaño mínimo más compacto
         self.configurar_interfaz()
     
     def configurar_interfaz(self):
         """Configura la interfaz del formulario"""
-        # Área de scroll
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        
-        # Widget principal
-        content_widget = QWidget()
-        layout = QVBoxLayout(content_widget)
-        layout.setContentsMargins(30, 30, 30, 30)
-        layout.setSpacing(12)
+        # Layout principal centrado
+        main_layout = QVBoxLayout()
+        main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setLayout(main_layout)
         
         # Título
         titulo = QLabel(self.titulo_texto)
-        titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        titulo.setStyleSheet("font-size: 20px; font-weight: bold;")
-        layout.addWidget(titulo)
+        titulo.setObjectName("titulo")
+        titulo.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        titulo.setStyleSheet("font-size: 20px; font-weight: bold; margin-bottom: 20px;")
+        main_layout.addWidget(titulo)
+        
+        # Widget del formulario
+        self.form_widget = QWidget()
+        self.form_widget.setObjectName("form_widget")
+        self.form_layout = QVBoxLayout()
+        self.form_layout.setSpacing(8)  # Espaciado más compacto
+        self.form_widget.setLayout(self.form_layout)
+        self.form_widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         
         # Crear campos del formulario
-        self.crear_campos_formulario(layout)
+        self.crear_campos_formulario()
         
         # Crear botones
-        self.crear_botones(layout)
+        self.crear_botones()
         
-        # Botón regresar
-        btn_regresar = QPushButton("Regresar")
-        btn_regresar.clicked.connect(self.volver_inicio)
-        layout.addWidget(btn_regresar, alignment=Qt.AlignmentFlag.AlignCenter)
-        
-        # Configurar scroll
-        scroll_area.setWidget(content_widget)
-        main_layout = QVBoxLayout(self)
-        main_layout.addWidget(scroll_area)
-        self.setLayout(main_layout)
+        # Agregar el form widget al layout principal
+        main_layout.addWidget(self.form_widget, alignment=Qt.AlignmentFlag.AlignCenter)
     
-    def crear_campos_formulario(self, layout):
+    def crear_campos_formulario(self):
         """Crea los campos del formulario"""
         campos = [
             ("ID Producto", "id_productos"),
@@ -67,35 +65,61 @@ class FormularioProductoView(QWidget):
             ("ID Proveedor", "id_proveedor")
         ]
         
-        for label_text, campo_db in campos:
+        for i, (label_text, campo_db) in enumerate(campos):
+            # Label del campo
             label = QLabel(label_text)
+            label.setObjectName("campo_label")
+            label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+            self.form_layout.addWidget(label)
+            
+            # Input del campo
             edit = QLineEdit()
+            edit.setObjectName("campo_input")
             edit.setPlaceholderText(label_text)
-            layout.addWidget(label)
-            layout.addWidget(edit)
+            edit.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+            self.form_layout.addWidget(edit)
             self.inputs[campo_db] = edit
+            
+            # Espaciado después del último campo
+            if i == len(campos) - 1:
+                self.form_layout.addSpacing(16)
     
-    def crear_botones(self, layout):
+    def crear_botones(self):
         """Crea los botones del formulario"""
         botones_layout = QHBoxLayout()
+        botones_layout.setSpacing(10)
         
         # Botón de acción principal
         btn_accion = QPushButton(self.boton_texto)
+        btn_accion.setObjectName("btn_primary")
+        btn_accion.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         btn_accion.clicked.connect(self.ejecutar_accion)
         botones_layout.addWidget(btn_accion)
         
         # Botón buscar (si es necesario)
         if self.mostrar_buscar and self.accion != "buscar":
             btn_buscar = QPushButton("Buscar")
+            btn_buscar.setObjectName("btn_primary")
+            btn_buscar.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
             btn_buscar.clicked.connect(self.buscar_producto)
             botones_layout.addWidget(btn_buscar)
         
         # Botón para limpiar campos
         btn_otro = QPushButton(f"{self.boton_texto} otro producto")
+        btn_otro.setObjectName("btn_primary")
+        btn_otro.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         btn_otro.clicked.connect(self.limpiar_campos)
         botones_layout.addWidget(btn_otro)
-        
-        layout.addLayout(botones_layout)
+
+        # Botón regresar
+        btn_regresar = QPushButton("← Regresar")
+        btn_regresar.setObjectName("btn_secondary")
+        btn_regresar.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        btn_regresar.clicked.connect(self.volver_inicio)
+        botones_layout.addWidget(btn_regresar)
+
+        self.form_layout.addLayout(botones_layout)
+
     
     def obtener_datos_formulario(self):
         """Obtiene los datos del formulario como diccionario"""
@@ -109,7 +133,7 @@ class FormularioProductoView(QWidget):
         """Llena el formulario con datos"""
         for campo, valor in datos.items():
             if campo in self.inputs:
-                self.inputs[campo].setText(valor)
+                self.inputs[campo].setText(str(valor) if valor else "")
     
     def limpiar_campos(self):
         """Limpia todos los campos del formulario"""
@@ -118,16 +142,23 @@ class FormularioProductoView(QWidget):
     
     def volver_inicio(self):
         """Vuelve al menú principal - Delega al controlador"""
+        self.limpiar_campos()
         self.controlador.volver_menu_principal()
     
     def mostrar_mensaje(self, tipo, titulo, mensaje):
         """Muestra un mensaje al usuario"""
+        mbox = QMessageBox(self)
+        mbox.setWindowTitle(titulo)
+        mbox.setText(mensaje)
+        
         if tipo == "info":
-            QMessageBox.information(self, titulo, mensaje)
+            mbox.setIcon(QMessageBox.Icon.Information)
         elif tipo == "warning":
-            QMessageBox.warning(self, titulo, mensaje)
+            mbox.setIcon(QMessageBox.Icon.Warning)
         elif tipo == "error":
-            QMessageBox.critical(self, titulo, mensaje)
+            mbox.setIcon(QMessageBox.Icon.Critical)
+        
+        mbox.exec()
     
     def ejecutar_accion(self):
         self.controlador.vista_formulario = self  # <-- aseguramos que no sea None
