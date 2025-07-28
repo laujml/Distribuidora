@@ -20,6 +20,7 @@ class EliminarUsuarioDialog(QDialog):
         layout.addWidget(self.usuario)
         layout.addWidget(btn_eliminar)
         self.setLayout(layout)
+    
     #Alerta si se elimina o no el usuario
     def eliminar_usuario(self):
         nombre = self.usuario.text()
