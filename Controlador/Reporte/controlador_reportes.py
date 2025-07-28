@@ -1,86 +1,197 @@
-from Modelo.modelo_reportes import ReportesModel
+import pymysql
+from PyQt6.QtWidgets import (
+    QWidget, QLabel, QVBoxLayout, QHBoxLayout, QComboBox, QPushButton,
+    QTableWidget, QTableWidgetItem, QDateEdit, QMessageBox, QFileDialog
+)
+from PyQt6.QtCore import Qt, QDate, pyqtSignal
+from PyQt6.QtGui import QFont
+import matplotlib
+matplotlib.use('QtAgg')
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+from Styles import Styles
+import pandas as pd
+import os
+from vista_reportes import ReportesView
 
 class ReportesController:
-    def __init__(self, view=None, stack=None):
-        self.model = None
+    def __init__(self, view, conectar_func):
         self.view = view
+        self.stack = None
+        self.conectar = conectar_func
+        self.setup_connections()
+    
+    def set_stack(self, stack):
+        """Asignar el stack widget para poder navegar"""
         self.stack = stack
-        if self.view:
-            self.connect_signals()
-            self.load_initial_data()
-
-    def connect_signals(self):
-        self.view.buscar_btn.clicked.connect(self.update_reports)
-        self.view.limpiar_btn.clicked.connect(self.clear_filters)
-        self.view.btn_exportar.clicked.connect(self.export_to_excel)
-        self.view.btn_actualizar.clicked.connect(self.update_reports)
-        self.view.back_clicked.connect(self.back_to_selection)
-        self.view.period_changed.connect(self.mostrar_reporte)
-        if self.stack and self.stack.widget(0):
-            self.stack.widget(0).ir_a_semanal_signal.connect(lambda: self.mostrar_reporte("Semanal"))
-            self.stack.widget(0).ir_a_mensual_signal.connect(lambda: self.mostrar_reporte("Mensual"))
-
-    def load_initial_data(self):
+    
+    def setup_connections(self):
+        """Configurar las conexiones de los botones"""
+        self.view.period_cb.currentTextChanged.connect(self.on_period_changed)
+        if hasattr(self.view, 'btn_regresar'):
+            self.view.btn_regresar.clicked.connect(self.regresar_a_seleccion)
+        if hasattr(self.view, 'btn_actualizar'):
+            self.view.btn_actualizar.clicked.connect(self.actualizar_datos)
+        if hasattr(self.view, 'btn_exportar'):
+            self.view.btn_exportar.clicked.connect(self.exportar_a_excel)
+    
+    def mostrar_reporte(self, periodo):
+        """Mostrar reporte del período especificado"""
+        self.view.set_periodo(periodo)
+        self.actualizar_datos()
+    
+    def on_period_changed(self, nuevo_periodo):
+        """Manejar cambio de período en el ComboBox"""
+        self.view.titulo.setText(f"Reporte {nuevo_periodo}")
+        self.actualizar_datos()
+    
+    def regresar_a_seleccion(self):
+        """Regresar a la pantalla de selección inicial"""
+        if self.stack:
+            self.stack.setCurrentIndex(0)
+    
+    def actualizar_datos(self):
+        """Fetch data from database and update view"""
         try:
-            self.model = ReportesModel()
-            clientes = self.model.get_clientes()
-            productos = self.model.get_productos()
-            self.view.populate_clientes(clientes)
-            self.view.populate_productos(productos)
-            self.view.set_periodo("Mensual")
-            self.update_reports()
-        except Exception as e:
-            self.view.show_error(str(e))
+            conn = self.conectar()
+            cursor = conn.cursor()
 
-    def update_reports(self):
-        try:
             filters = self.view.get_filter_values()
             start_date = filters['start_date']
             end_date = filters['end_date']
-            if start_date > end_date:
-                self.view.show_error("La fecha de inicio no puede ser posterior a la fecha de fin.")
-                return
             cliente_id = filters['cliente_id']
             producto_id = filters['producto_id']
             period = filters['period']
-            total_ventas, total_pedidos = self.model.get_total_ventas(start_date, end_date, cliente_id)
-            top_cliente = self.model.get_top_cliente(start_date, end_date)
-            productos_vendidos = self.model.get_productos_vendidos(start_date, end_date, producto_id)
-            ventas_por_fecha = self.model.get_ventas_por_fecha(start_date, end_date)
-            top_clientes = self.model.get_top_clientes(start_date, end_date)
-            best_products = productos_vendidos[-5:] if productos_vendidos else []
-            worst_products = productos_vendidos[:5] if productos_vendidos else []
-            top_producto = best_products[-1][0] if best_products else '-'
-            self.view.update_summary(total_ventas, total_pedidos, top_producto, top_cliente)
-            self.view.update_graphs(ventas_por_fecha, top_clientes, best_products, worst_products)
+
+            cursor.execute("SELECT ID_Cliente, Nombre FROM Cliente")
+            clientes = cursor.fetchall()
+            self.view.populate_clientes(clientes)
+
+            cursor.execute("SELECT ID_Productos, descripcion FROM Productos")
+            productos = cursor.fetchall()
+            self.view.populate_productos(productos)
+
+            query = """
+                SELECT p.fecha_hora, c.Nombre, pr.descripcion, dp.cantidad_pares, dp.subtotal
+                FROM Pedido p
+                JOIN Cliente c ON p.ID_Cliente = c.ID_Cliente
+                JOIN detalle_pedido dp ON p.ID_Pedido = dp.ID_Pedido
+                JOIN Productos pr ON dp.ID_Productos = pr.ID_Productos
+                WHERE p.fecha_hora BETWEEN %s AND %s
+            """
+            params = [start_date, end_date]
+
+            if cliente_id:
+                query += " AND p.ID_Cliente = %s"
+                params.append(cliente_id)
+            if producto_id:
+                query += " AND dp.ID_Productos = %s"
+                params.append(producto_id)
+
+            cursor.execute(query, params)
+            datos = cursor.fetchall()
+            self.view.actualizar_tabla(datos)
+
+            total_ventas = sum(row[4] for row in datos) if datos else 0.0
+            total_pedidos = len(set(row[0] for row in datos)) if datos else 0
+
+            cursor.execute("""
+                SELECT c.Nombre, SUM(dp.subtotal) as total
+                FROM Pedido p
+                JOIN Cliente c ON p.ID_Cliente = c.ID_Cliente
+                JOIN detalle_pedido dp ON p.ID_Pedido = dp.ID_Pedido
+                WHERE p.fecha_hora BETWEEN %s AND %s
+                GROUP BY c.ID_Cliente, c.Nombre
+                ORDER BY total DESC
+                LIMIT 1
+            """, [start_date, end_date])
+            top_cliente = cursor.fetchone()
+            top_cliente_name = top_cliente[0] if top_cliente else "-"
+
+            cursor.execute("""
+                SELECT pr.descripcion, SUM(dp.cantidad_pares) as cantidad
+                FROM detalle_pedido dp
+                JOIN Productos pr ON dp.ID_Productos = pr.ID_Productos
+                JOIN Pedido p ON dp.ID_Pedido = p.ID_Pedido
+                WHERE p.fecha_hora BETWEEN %s AND %s
+                GROUP BY pr.ID_Productos, pr.descripcion
+                ORDER BY cantidad DESC
+                LIMIT 1
+            """, [start_date, end_date])
+            top_producto = cursor.fetchone()
+            top_producto_name = top_producto[0] if top_producto else "-"
+
+            self.view.update_summary(total_ventas, total_pedidos, top_producto_name, top_cliente_name)
+
+            cursor.execute("""
+                SELECT c.Nombre, SUM(dp.subtotal)
+                FROM Pedido p
+                JOIN Cliente c ON p.ID_Cliente = c.ID_Cliente
+                JOIN detalle_pedido dp ON p.ID_Pedido = dp.ID_Pedido
+                WHERE p.fecha_hora BETWEEN %s AND %s
+                GROUP BY c.ID_Cliente, c.Nombre
+                ORDER BY SUM(dp.subtotal) DESC
+                LIMIT 5
+            """, [start_date, end_date])
+            client_data = [(row[0], row[1]) for row in cursor.fetchall()]
+
+            cursor.execute("""
+                SELECT pr.descripcion, SUM(dp.cantidad_pares)
+                FROM detalle_pedido dp
+                JOIN Productos pr ON dp.ID_Productos = pr.ID_Productos
+                JOIN Pedido p ON dp.ID_Pedido = p.ID_Pedido
+                WHERE p.fecha_hora BETWEEN %s AND %s
+                GROUP BY pr.ID_Productos, pr.descripcion
+                ORDER BY SUM(dp.cantidad_pares) DESC
+                LIMIT 5
+            """, [start_date, end_date])
+            best_products = [(row[0], row[1]) for row in cursor.fetchall()]
+
+            cursor.execute("""
+                SELECT pr.descripcion, SUM(dp.cantidad_pares)
+                FROM detalle_pedido dp
+                JOIN Productos pr ON dp.ID_Productos = pr.ID_Productos
+                JOIN Pedido p ON dp.ID_Pedido = p.ID_Pedido
+                WHERE p.fecha_hora BETWEEN %s AND %s
+                GROUP BY pr.ID_Productos, pr.descripcion
+                ORDER BY SUM(dp.cantidad_pares) ASC
+                LIMIT 5
+            """, [start_date, end_date])
+            worst_products = [(row[0], row[1]) for row in cursor.fetchall()]
+
+            self.view.update_graphs([], client_data, best_products, worst_products)
+
+            cursor.close()
+            conn.close()
+
+        except pymysql.Error as err:
+            self.view.show_error(f"Error de base de datos: {err}")
         except Exception as e:
-            self.view.show_error(str(e))
+            self.view.show_error(f"Error: {e}")
 
-    def clear_filters(self):
-        self.view.reset_filters()
-        self.update_reports()
-
-    def export_to_excel(self):
+    def exportar_a_excel(self):
         try:
-            filters = self.view.get_filter_values()
-            filepath = self.view.get_export_path()
-            if not filepath:
+            data = self.view.get_table_data_for_export()
+            if not data or not data[1:]:  
+                self.view.show_error("No hay datos para exportar.")
                 return
-            success = self.model.export_to_excel(filters['start_date'], filters['end_date'], filepath)
-            if success:
-                self.view.show_info("Reporte exportado exitosamente.")
+
+            # Crear DataFrame
+            df = pd.DataFrame(data[1:], columns=data[0])
+
+           
+            default_path = os.path.join(os.getcwd(), "reporte_ventas.xlsx")
+            file_path, _ = QFileDialog.getSaveFileName(
+                self.view, "Guardar Reporte", default_path, "Excel Files (*.xlsx)"
+            )
+            if not file_path:  
+                return
+
+            # Export to Excel
+            df.to_excel(file_path, index=False)
+            self.view.show_info(f"Reporte exportado exitosamente a {file_path}")
+
+        except PermissionError:
+            self.view.show_error("No se puede guardar el archivo. Cierre el archivo Excel si está abierto.")
         except Exception as e:
-            self.view.show_error(str(e))
-
-    def mostrar_reporte(self, period):
-        print(f"Updating report for period: {period}")  # Debug print
-        self.view.set_periodo(period)
-        self.update_reports()
-
-    def back_to_selection(self):
-        if self.stack:
-            self.stack.setCurrentIndex(0)
-
-    def close(self):
-        if self.model:
-            self.model.close()
+            self.view.show_error(f"Error al exportar a Excel: {e}")
