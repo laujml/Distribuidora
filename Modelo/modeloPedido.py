@@ -57,7 +57,7 @@ class Modelo:
         consulta = """
             SELECT p.fecha_hora, p.ID_Pedido, p.ID_Cliente, c.Nombre, c.Telefono, 
                 ps.ID_Productos, ps.descripcion, ps.precio, dp.cantidad_pares, dp.subtotal, 
-                p.total, e.estado AS estado_nombre, p.pendiente_pagar, p.plazo_dias
+                p.total, e.estado AS estado_nombre, e.id_estado, p.pendiente_pagar, p.plazo_dias
             FROM Pedido p
             INNER JOIN Cliente c ON p.ID_Cliente = c.ID_Cliente
             INNER JOIN detalle_pedido dp ON p.ID_Pedido = dp.ID_Pedido
@@ -80,6 +80,7 @@ class Modelo:
                     "telefono": fila["Telefono"],
                     "total": fila["total"],
                     "estado": fila["estado_nombre"],
+                    "estado_id": fila["id_estado"],  # ✅ Agregar esta línea
                     "pendiente_pagar": fila["pendiente_pagar"],
                     "plazo_dias": fila["plazo_dias"],
                     "productos": []
@@ -129,9 +130,8 @@ class Modelo:
             for id_producto, cantidad in detalles_anteriores:
                 self.cursor.execute("UPDATE Productos SET stockActual = stockActual + %s WHERE ID_Productos = %s", (cantidad, id_producto))
 
-            # Actualizar tabla Pedido
             self.cursor.execute("""
-                UPDATE Pedido SET ID_Cliente = %s, total = %s, estado = %s, pendiente_pagar = %s, plazo_dias = %s
+                UPDATE Pedido SET ID_Cliente = %s, total = %s, id_estado = %s, pendiente_pagar = %s, plazo_dias = %s
                 WHERE ID_Pedido = %s
             """, (cliente_id, total, estado, pendiente_pagar, plazo_dias, id_pedido))
 
@@ -159,4 +159,3 @@ class Modelo:
     def cerrar_conexion(self):
         self.cursor.close()
         self.conexion.close()
-
