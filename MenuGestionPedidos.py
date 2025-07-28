@@ -44,9 +44,9 @@ class MenuGestionPedidos(QWidget):
     def menu(self):
         layout_principal = QHBoxLayout(self)
 
-        # ✅ Contenedor con ancho fijo para el menú lateral
+        # Contenedor con ancho fijo para el menú lateral
         menu_container = QWidget()
-        menu_container.setFixedWidth(140)  # Ancho fijo de 250px
+        menu_container.setFixedWidth(140)
         menu_container.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
         
         # Layout del menú lateral
@@ -79,13 +79,13 @@ class MenuGestionPedidos(QWidget):
         for opcion in opciones:
             self.lista_menu.addItem(QListWidgetItem(opcion))
 
-        # ✅ Agregar el contenedor del menú al layout principal
+        # Agregar el contenedor del menú al layout principal
         layout_principal.addWidget(menu_container)
 
         # Panel derecho con el contenido principal
         self.stacked_widget = QStackedWidget()
         self.stacked_widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        layout_principal.addWidget(self.stacked_widget)  # Sin factor de stretch, toma todo el espacio restante
+        layout_principal.addWidget(self.stacked_widget) 
 
         # Precargar Dashboard (índice 1)
         try:
