@@ -32,14 +32,13 @@ class FormularioProductoView(QWidget):
         titulo = QLabel(self.titulo_texto)
         titulo.setObjectName("titulo")
         titulo.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        titulo.setStyleSheet("font-size: 20px; font-weight: bold; margin-bottom: 20px;")
         main_layout.addWidget(titulo)
         
         # Widget del formulario
         self.form_widget = QWidget()
         self.form_widget.setObjectName("form_widget")
         self.form_layout = QVBoxLayout()
-        self.form_layout.setSpacing(8)  # Espaciado más compacto
+        self.form_layout.setSpacing(8)  
         self.form_widget.setLayout(self.form_layout)
         self.form_widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         
@@ -161,7 +160,7 @@ class FormularioProductoView(QWidget):
         mbox.exec()
     
     def ejecutar_accion(self):
-        self.controlador.vista_formulario = self  # <-- aseguramos que no sea None
+        self.controlador.vista_formulario = self  
         if self.accion == "guardar":
             self.controlador.guardar_producto()
         elif self.accion == "eliminar":
