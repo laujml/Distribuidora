@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QApplication, QStackedWidget
-from vista_reportes import ReportesView
-from pantalla_seleccion import PantallaSeleccion
-from controlador_reportes import ReportesController
+from Vista.Reporte.vista_reportes import ReportesView
+from Vista.Reporte.pantalla_seleccion import PantallaSeleccion
+from Controlador.Reporte.controlador_reportes import ReportesController
 import sys
 
 def main():
