@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QTableWidgetItem, QHBoxLayout, QLabel,
-    QSpinBox, QPushButton, QLineEdit, QCompleter, QDoubleSpinBox, QComboBox
+    QSpinBox, QPushButton, QLineEdit, QCompleter, QDoubleSpinBox, QComboBox, QMessageBox
 )
 from PyQt6.QtCore import Qt, pyqtSignal
 from Vista.Pedido.tablaPedidos import TablaPedido
@@ -127,17 +127,26 @@ class CrearPedidos(QWidget):
         for id_estado, nombre_estado in lista_estados:
             self.combo_estado.addItem(nombre_estado, id_estado)
 
+    def actualizar_pendiente_automaticamente(self):
+        estado = self.combo_estado.currentText().strip().lower()
+        if estado == "Pendiente":
+            self.spin_pendiente.setValue(self.total_actual)
+
     def eliminar_fila(self):
         fila = self.tabla.currentRow()
         if fila != -1:
             self.eliminar_fila_signal.emit(fila)
-    
+        else:
+            QMessageBox.warning(self, "Advertencia", "Seleccione una fila para eliminar.")
+
     def cambiar_cantidad(self):
         fila = self.tabla.currentRow()
         if fila != -1:
             cantidad_actual = int(self.tabla.item(fila, 3).text())
             self.cambiar_cantidad_signal.emit(fila, cantidad_actual)
-
+        else:
+            QMessageBox.warning(self, "Advertencia", "Seleccione una fila para cambiar la cantidad.")
+    
     def guardar_pedido(self):
         cliente = self.line_cliente.text()
         estado = self.combo_estado.currentData()
@@ -166,6 +175,7 @@ class CrearPedidos(QWidget):
     
     def actualizar_total(self, total):
         self.label_total.setText(f"Total: ${total:.2f}")
+        self.spin_pendiente.setMaximum(total)
     
     def eliminar_fila_tabla(self, fila):
         self.tabla.removeRow(fila)
