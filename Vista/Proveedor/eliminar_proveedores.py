@@ -64,10 +64,3 @@ class EliminarProveedores(EliminarClientes):
         if confirm == QMessageBox.StandardButton.Yes:
             ok, msg = self.controller.eliminar_proveedor(id_proveedor)
             self.mostrar_popup(msg, ok)
-
-if __name__ == "__main__":
-    # main
-    app = QApplication(sys.argv)
-    ventana = EliminarProveedores(None)  # controller será None para prueba
-    ventana.show()
-    sys.exit(app.exec())
