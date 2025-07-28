@@ -81,10 +81,3 @@ class ActualizarProveedores(ActualizarClientes):
     
     def actualizar_proveedor(self):
         return self.actualizar_item()
-
-if __name__ == "__main__":
-    # main
-    app = QApplication(sys.argv)
-    ventana = ActualizarProveedores(None)  # controller será None para prueba
-    ventana.show()
-    sys.exit(app.exec())
