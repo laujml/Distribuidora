@@ -41,6 +41,15 @@ class ControladorCrearPedidos:
     def cargar_estados(self):
         estados = self.modelo.obtener_estado()  # [(1, 'Pendiente'), (2, 'Pagado'), ...]
         self.vista.cargar_estados(estados)
+        self.vista.combo_estado.currentTextChanged.connect(
+        self.vista.actualizar_pendiente_automaticamente
+    )
+
+    # En ControladorCrearPedidos
+    def refrescar_datos(self):
+        self.cargar_productos()
+        self.cargar_clientes()
+        self.cargar_estados()
     
     def agregar_producto(self, texto_producto, cantidad):
         if not texto_producto:
@@ -147,10 +156,23 @@ class ControladorCrearPedidos:
 
             id_cliente = texto_cliente.split("-")[0].strip() if "-" in texto_cliente else texto_cliente
 
+            # Verificar si el cliente existe en la base de datos
+            clientes_validos = self.modelo.obtener_clientes()
+            clientes_ids = [c.split("-")[0].strip() for c in clientes_validos]
+            if id_cliente not in clientes_ids:
+                QMessageBox.critical(self.vista, "Cliente no válido",
+                                    "El cliente ingresado no existe. Selecciónelo desde el autocompletado.")
+                return
+            
+            if pendiente_pagar > self.total:
+                QMessageBox.warning(self.vista, "Valor inválido",
+                                    "La cantidad pendiente no puede ser mayor al total del pedido.")
+                return
+
+            # Proceder con la creación
             id_pedido = self.modelo.crear_pedido(
                 id_cliente, self.total, estado, pendiente_pagar, plazo_dias
             )
-
             self.modelo.agregar_detalle_y_actualizar_stock(id_pedido, self.productos_seleccionados)
 
             QMessageBox.information(self.vista, "Éxito",
@@ -159,7 +181,7 @@ class ControladorCrearPedidos:
 
         except Exception as e:
             QMessageBox.critical(self.vista, "Error",
-                                 f"No se pudo guardar el pedido:\n{e}")
+                                f"No se pudo guardar el pedido:\n{e}")
 
     def resetear_pedido(self):
         self.vista.limpiar()
@@ -171,4 +193,3 @@ class ControladorCrearPedidos:
 
     def get_vista(self):
         return self.vista
-
