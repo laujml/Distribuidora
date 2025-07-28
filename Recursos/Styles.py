@@ -192,4 +192,80 @@ class Styles:
             QPushButton#menuButton:pressed {{
                 background-color: #d0d0d0;
             }}
+            
+            /* ===== ESTILOS PARA FORMULARIOS DE CLIENTES ===== */
+            
+            /* Labels de campos en formularios */
+            QLabel#campo_label {{
+                color: #fff;
+                font-size: 12px;
+                font-weight: 500;
+                margin-bottom: 2px;
+                font-family: 'Poppins', sans-serif;
+            }}
+            
+            /* Inputs de texto en formularios */
+            QLineEdit#campo_input {{
+                background: #fff;
+                border-radius: 15px;
+                border: none;
+                padding: 4px 12px;
+                font-size: 12px;
+                font-family: 'Poppins', sans-serif;
+                min-height: 28px;
+                max-height: 28px;
+                color: #222;
+            }}
+            
+            QLineEdit#campo_input:focus {{
+                background: #f8f9fa;
+                border: 2px solid #3498db;
+            }}
+            
+            /* Botones de formularios - estilo común */
+            QPushButton#btn_primary, QPushButton#btn_secondary {{
+                background: #fff;
+                color: {Styles.PRIMARY_TEXT};
+                border-radius: 8px;
+                padding: 4px 12px;
+                font-size: 12px;
+                font-weight: 600;
+                font-family: 'Poppins', sans-serif;
+                min-height: 28px;
+                border: none;
+            }}
+            
+            QPushButton#btn_primary:hover, QPushButton#btn_secondary:hover {{
+                background-color: #eaeaea;
+            }}
+            
+            QPushButton#btn_primary:pressed, QPushButton#btn_secondary:pressed {{
+                background-color: #dcdcdc;
+            }}
+            
+            /* Widget del formulario */
+            QWidget#form_widget {{
+                background: transparent;
+            }}
+            
+            /* Botón del dashboard */
+            QPushButton#btn_dashboard {{
+                background: #fff;
+                color: {Styles.PRIMARY_TEXT};
+                border-radius: 8px;
+                padding: 6px 16px;
+                font-size: 12px;
+                font-weight: 600;
+                font-family: 'Poppins', sans-serif;
+                min-height: 32px;
+                border: 1px solid {Styles.PRIMARY_TEXT};
+            }}
+            
+            QPushButton#btn_dashboard:hover {{
+                background-color: #f0f0f0;
+            }}
+            
+            QPushButton#btn_dashboard:pressed {{
+                background-color: #e0e0e0;
+            }}
         """
