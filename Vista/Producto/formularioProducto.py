@@ -119,7 +119,6 @@ class FormularioProductoView(QWidget):
 
         self.form_layout.addLayout(botones_layout)
 
-    
     def obtener_datos_formulario(self):
         """Obtiene los datos del formulario como diccionario"""
         return {campo: input_widget.text() for campo, input_widget in self.inputs.items()}
