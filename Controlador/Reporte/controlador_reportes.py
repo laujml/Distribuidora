@@ -9,10 +9,10 @@ import matplotlib
 matplotlib.use('QtAgg')
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-from Styles import Styles
+from Recursos.Styles import Styles
 import pandas as pd
 import os
-from vista_reportes import ReportesView
+from Vista.vista_reportes import ReportesView
 
 class ReportesController:
     def __init__(self, view, conectar_func):
