@@ -40,10 +40,3 @@ class AgregarProveedores(AgregarClientes):
         direccion = self.campos["Direccion"].text().strip()
         ok, msg = self.controller.agregar_proveedor(id_proveedor, proveedor, p_contacto, correo, telefono, direccion)
         self.mostrar_popup(msg, ok)
-
-if __name__ == "__main__":
-    # main
-    app = QApplication(sys.argv)
-    ventana = AgregarProveedores(None)  # controller será None para prueba
-    ventana.show()
-    sys.exit(app.exec())
