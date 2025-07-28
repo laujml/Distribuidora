@@ -15,13 +15,11 @@ from Consolidado.ventanaProveedores import MainProveedores
 #componente del dashboard
 from Vista.Dashboard.pantalla_dashboard import PantallaDashboard
 
-# Importar los componentes de reportes
-from Vista.Reporte.pantalla_seleccion import PantallaSeleccion
-from Vista.Reporte.vista_reportes import ReportesView
-from Controlador.Reporte.controlador_reportes import ReportesController
-
-#IMportar productos
+#Importar productos
 from Consolidado.ventanaProducto import AplicacionProductos
+
+# Importar la función de reportes
+from Consolidado.ventanaReportes import crear_modulo_reportes  # O el archivo donde pongas la función
 
 class MenuGestionPedidos(QWidget):
     def __init__(self, stack): 
@@ -34,10 +32,6 @@ class MenuGestionPedidos(QWidget):
 
         # Variable para trackear el índice actual
         self.current_index = -1
-
-        # Stack para reportes (será creado cuando se necesite)
-        self.reportes_stack = None
-        self.reportes_controller = None
 
         self.menu()
 
@@ -168,16 +162,11 @@ class MenuGestionPedidos(QWidget):
         
         elif index == 6:  # Reportes
             try:
-                # Crear el sistema de reportes si no existe
-                if self.reportes_stack is None:
-                    widget_reportes = self.crear_sistema_reportes()
-                    self.widgets_cache[index] = widget_reportes
-                    self.stacked_widget.addWidget(widget_reportes)
-                    self.stacked_widget.setCurrentWidget(widget_reportes)
-                else:
-                    # Si ya existe, solo mostrarlo
-                    widget_reportes = self.widgets_cache[index]
-                    self.stacked_widget.setCurrentWidget(widget_reportes)
+                # Crear módulo de reportes usando la función reutilizable
+                widget_reportes = crear_modulo_reportes()
+                self.widgets_cache[index] = widget_reportes
+                self.stacked_widget.addWidget(widget_reportes)
+                self.stacked_widget.setCurrentWidget(widget_reportes)
             except Exception as e:
                 error_widget = QLabel(f"Error al cargar Reportes: {str(e)}")
                 error_widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -200,22 +189,18 @@ class MenuGestionPedidos(QWidget):
 
     def limpiar_cache(self):
         """Limpia el caché de widgets si es necesario"""
-        # Cerrar el controlador de reportes si existe
-        if self.reportes_controller:
-            try:
-                self.reportes_controller.close()
-            except:
-                pass
-            
         for index, widget in self.widgets_cache.items():
             if widget:
+                # Si es el widget de reportes, cerrar conexiones DB
+                if index == 6 and hasattr(widget, 'reportes_controller'):
+                    try:
+                        widget.reportes_controller.close()
+                    except:
+                        pass
+                        
                 widget.setParent(None)
                 widget.deleteLater()
         self.widgets_cache.clear()
-        
-        # Limpiar referencias
-        self.reportes_stack = None
-        self.reportes_controller = None
 
     def closeEvent(self, event):
         """Limpia recursos al cerrar"""
