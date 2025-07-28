@@ -24,6 +24,7 @@ class ModificarUsuarioDialog(QDialog):
         layout.addWidget(self.password)
         layout.addWidget(btn_modificar)
         self.setLayout(layout)
+    
     #Si se modifica la password se muestra un mensaje de confirmacion. Si el usuario no existe se muestra una advertencia de error y la nula existencia del usuario
     def modificar_usuario(self):
         nombre = self.usuario.text()
