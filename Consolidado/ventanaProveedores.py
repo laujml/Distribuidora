@@ -37,7 +37,7 @@ class MenuPrincipal(QWidget):
 
         # actualizar btn
         btn_actualizar = QPushButton()
-        btn_actualizar.setText("Actualizar datos")
+        btn_actualizar.setText("Actualizar proveedor")
         btn_actualizar.setIcon(QIcon("recursos/Actualizar datos.jpg"))
         btn_actualizar.clicked.connect(lambda: self.cambiar_vista('actualizar'))
         main_layout.addWidget(btn_actualizar)
