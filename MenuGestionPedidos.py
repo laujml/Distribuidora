@@ -21,6 +21,9 @@ from Consolidado.ventanaProducto import AplicacionProductos
 # Importar la función de reportes
 from Consolidado.ventanaReportes import crear_modulo_reportes  # O el archivo donde pongas la función
 
+#Importar stock bajo
+from Controlador.Producto.stock_bajo_controlador import StockBajoControlador
+
 class MenuGestionPedidos(QWidget):
     def __init__(self, stack): 
         super().__init__()
@@ -34,7 +37,8 @@ class MenuGestionPedidos(QWidget):
         self.current_index = -1
 
         self.menu()
-
+        self.productos_alertados = set()
+    
     def menu(self):
         layout_principal = QHBoxLayout(self)
 
@@ -101,7 +105,7 @@ class MenuGestionPedidos(QWidget):
             error_widget = QLabel(f"Error al precargar Pedidos: {str(e)}")
             error_widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
             self.widgets_cache[3] = error_widget
-            self.stacked_widget.addWidget(error_widget)
+            self.stacked_widget.addWidget(error_widget)        
 
     def entrar_ventana_seguro(self, index):
         """Evita conflictos al cambiar entre ventanas"""
@@ -114,6 +118,10 @@ class MenuGestionPedidos(QWidget):
         self.current_index = index
 
         if index in self.widgets_cache:
+            # Mostrar alerta si el usuario entra a Pedidos
+            if index in [2]:  
+                self.mostrar_alerta_stock_bajo()
+
             widget = self.widgets_cache[index]
             self.stacked_widget.setCurrentWidget(widget)
             return
@@ -135,6 +143,7 @@ class MenuGestionPedidos(QWidget):
 
         elif index == 4:  # Productos
             try:
+                self.mostrar_alerta_stock_bajo()
                 widget_productos = AplicacionProductos(parent=self)  # Pasar parent
                 widget_productos_main = widget_productos.stacked_widget
                 self.widgets_cache[index] = widget_productos_main
@@ -201,6 +210,23 @@ class MenuGestionPedidos(QWidget):
                 widget.setParent(None)
                 widget.deleteLater()
         self.widgets_cache.clear()
+
+    def mostrar_alerta_stock_bajo(self):
+        controlador = StockBajoControlador()
+        productos_bajo_stock = controlador.verificar_stock_bajo()
+
+        nuevos_alertas = []
+        for descripcion, stock in productos_bajo_stock:
+            if descripcion not in self.productos_alertados:
+                nuevos_alertas.append((descripcion, stock))
+
+        if nuevos_alertas:
+            mensaje = "¡Atención! Los siguientes productos tienen bajo stock:\n\n"
+            for descripcion, stock in nuevos_alertas:
+                mensaje += f"- {descripcion}: {stock} unidades\n"
+                self.productos_alertados.add(descripcion)  # Agregarlos al set
+
+            QMessageBox.warning(self, "Stock Bajo", mensaje)
 
     def closeEvent(self, event):
         """Limpia recursos al cerrar"""
