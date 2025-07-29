@@ -124,7 +124,7 @@ CREATE TABLE `Productos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `Productos` VALUES
-('bt-94','Botas de cuero para hombre',17.00,12.0,'café',9,'2025-07-03',3),
+('bt-94','Botas de cuero para hombre',17.00,12.0,'café',6,'2025-07-03',3),
 ('CS-327','Tenis casuales para hombre',18.25,11.0,'Negro',97,'2025-02-15',10),
 ('DZ-005','Zapato deportivo para hombre',19.00,12.0,'Azul',117,'2025-02-15',6),
 ('SH-34','Tenis con broche ',9.30,9.0,'blanco',70,'2025-07-10',4),
@@ -134,9 +134,9 @@ INSERT INTO `Productos` VALUES
 ('SS235','Botas impermeables para niños',10.00,4.5,'Verde',79,'2025-02-16',2),
 ('ZD234','Zapato deportivo mujer',18.70,9.0,'Rosa',98,'2025-02-17',7),
 ('ZO-12','Zapato de vestir para hombre',20.99,12.0,'Café',90,'2025-02-20',3),
-('zp-05','Zapato deportivo para niños',10.00,4.0,'rojo',30,'2025-07-01',1),
+('zp-05','Zapato deportivo para niños',10.00,4.0,'rojo',3,'2025-07-01',1),
 ('ZP-5511','Sandalias playeras unisex',8.00,10.0,'Blanco',89,'2025-02-20',9),
-('zp11','Zapato',10.00,12.0,'gris',35,'2025-03-30',4),
+('zp11','Zapato',10.00,12.0,'gris',0,'2025-03-30',4),
 ('zp34','Zapato de mujer',10.00,8.0,'negro',46,'2025-04-12',2),
 ('ZPL-43','Zapato con dibujo animado',6.70,6.0,'rojo',55,'2025-07-10',5),
 ('ZT-001','Tacón bajo',19.99,8.0,'Negro',118,'2025-02-20',5);
